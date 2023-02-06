@@ -1,3 +1,5 @@
+import { APP_FILTER } from '@nestjs/core';
+import { AllExceptionsFilter } from './common/filter/http.exception';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
@@ -24,6 +26,10 @@ import { APP_GUARD } from '@nestjs/core';
   ],
   controllers: [AppController],
   providers: [
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,

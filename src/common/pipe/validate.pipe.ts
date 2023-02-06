@@ -1,3 +1,4 @@
+import { MyException } from '@/util/MyException';
 import {
   HttpException,
   HttpStatus,
@@ -16,14 +17,10 @@ export class ValidatePipe extends ValidationPipe {
       };
     });
 
-    throw new HttpException(
-      {
-        code: HttpStatus.BAD_REQUEST,
-        messages,
-        error: 'bad request',
-      },
-      HttpStatus.BAD_REQUEST,
-    );
+    throw new MyException({
+      code: '400',
+      error: messages,
+    });
   }
   // async transform(value: any, metadata: ArgumentMetadata) {
   //   const { metatype } = metadata;

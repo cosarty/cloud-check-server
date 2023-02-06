@@ -49,3 +49,5 @@ export class CodeController extends BaseController {
   }
 }
 ```
+
+## 定义全局的过滤器

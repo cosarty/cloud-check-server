@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { MyException } from '@/util/MyException';
+import { HttpException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -15,6 +16,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(user) {
+    throw new MyException({ code: '400', error: '验证失败' });
     return user;
   }
 }
