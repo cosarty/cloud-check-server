@@ -1,10 +1,5 @@
 import { MyException } from '@/util/MyException';
-import {
-  HttpException,
-  HttpStatus,
-  ValidationError,
-  ValidationPipe,
-} from '@nestjs/common';
+import { ValidationError, ValidationPipe } from '@nestjs/common';
 
 export class ValidatePipe extends ValidationPipe {
   protected flattenValidationErrors(

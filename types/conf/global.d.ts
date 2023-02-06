@@ -16,3 +16,11 @@ export type ValidateErrInfo = {
   field: string;
   message: string;
 };
+
+export type BaseData<T> = {
+  success: boolean;
+  data: T;
+  timestamp: Date;
+  message?: string;
+  code: number;
+};

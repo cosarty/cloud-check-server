@@ -50,4 +50,18 @@ export class CodeController extends BaseController {
 }
 ```
 
-## 定义全局的过滤器
+## 权限设计
+
+- student
+  - 签到
+  - 查看自己的信息
+  - 查看签到
+  - 查看签到信息
+- teacher
+  - 发布签到
+  - 创建课程
+  - 查看课程
+- super
+  - 全部权限
+- admin
+  - 采集信息图片

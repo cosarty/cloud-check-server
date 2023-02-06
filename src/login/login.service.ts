@@ -9,7 +9,10 @@ export class LoginService {
   async create(createLoginDto: CreateLoginDto) {
     console.log('createLoginDto: ', createLoginDto);
 
-    return { token: await this.jwtServe.signAsync(createLoginDto) };
+    return {
+      message: '获取成功',
+      data: { token: await this.jwtServe.signAsync(createLoginDto) },
+    };
   }
 
   findAll() {

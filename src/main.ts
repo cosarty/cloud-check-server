@@ -12,6 +12,7 @@ async function bootstrap() {
     exclude: ['/'],
   });
 
+  // 自定义验证守卫守卫
   // app.useGlobalPipes(new ValidationPipe({ whitelist: false,, transform: true }));
   app.useGlobalPipes(new ValidatePipe({ whitelist: false }));
   await app.listen(3000);
