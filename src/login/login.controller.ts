@@ -14,6 +14,8 @@ import { LoginService } from './login.service';
 import { CreateLoginDto } from './dto/create-login.dto';
 import { UpdateLoginDto } from './dto/update-login.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { Admin, Auth } from '@/common/role/auth.decorator';
+import { AuthEnum } from '@/constants/authEnum';
 
 @Controller('login')
 export class LoginController {
@@ -26,7 +28,7 @@ export class LoginController {
   }
 
   @Get()
-  @UseGuards(AuthGuard('jwt'))
+  @Admin()
   findAll(@Query() createLoginDto: any, @Req() req) {
     return req.user;
   }

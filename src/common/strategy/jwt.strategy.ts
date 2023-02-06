@@ -16,7 +16,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(user) {
-    throw new MyException({ code: '400', error: '验证失败' });
+    // throw new MyException({ code: '400', error: '验证失败' });
     return user;
   }
 }
