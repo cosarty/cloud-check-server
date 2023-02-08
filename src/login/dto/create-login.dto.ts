@@ -1,5 +1,5 @@
 import { IsConfirmedRule } from '@/common/rule/confirmation.rule';
-import { Type } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import {
   IsArray,
   IsInt,
@@ -15,6 +15,7 @@ import {
 
 class Test {
   @IsNotEmpty({ message: 'abc不能为空' })
+  @Expose()
   abc: string;
 }
 

@@ -12,6 +12,7 @@ export type ErrorDataImp = {
   success?: boolean;
 };
 
+// 校验错误的基本结构
 export type ValidateErrInfo = {
   field: string;
   message: string;

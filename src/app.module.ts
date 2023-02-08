@@ -1,3 +1,4 @@
+import { SequelizeModule } from './util/global/sequelize.module';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { AllExceptionsFilter } from './common/filter/http.exception';
 import { Module } from '@nestjs/common';
@@ -8,13 +9,15 @@ import { LoginModule } from './login/login.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { ResponseInterceptor } from './common/interceptor/response.interceptor';
+import databseConf from './config/databse.conf';
 
 @Module({
   imports: [
+    SequelizeModule,
     LoginModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [jwtConf],
+      load: [jwtConf, databseConf],
     }),
 
     // 限流
