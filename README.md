@@ -65,3 +65,59 @@ export class CodeController extends BaseController {
   - 全部权限
 - admin
   - 采集信息图片
+
+## 笔记
+
+### class-transformer 和 class-validator
+
+嵌套校验
+
+我们需要利用两个装饰器
+
+- `@Type` 这个装饰器主要帮助我们进行递归 JSON 的实例化，如果不进行实例化的话无法使用下面那个装饰器进行递归校验
+- `@ValidateNested` 开启递归校验
+
+需要实现一下 validatePipe 使用 plainToClass 进行装换
+
+```ts
+const deepError = (errors: ValidationError): ValidateErrInfo[] => {
+  const field = errors.property;
+  const message = errors.constraints
+    ? Object.values(errors.constraints)[0]
+    : '';
+  if (errors.children?.length > 0) {
+    const errList: ValidateErrInfo[] = [];
+    for (const error of errors.children) {
+      error.property = `${field}.${error.property}`;
+      let err: any = deepError(error);
+      err = Array.isArray(err) ? err.flat(Infinity) : [err];
+      errList.push(...err);
+    }
+    return errList;
+  }
+  return [{ field, message }];
+};
+
+export class ValidatePipe extends ValidationPipe {
+  async transform(value: any, metadata: ArgumentMetadata) {
+    const { metatype } = metadata;
+    //前台提交的表单数据没有类型，使用 plainToClass 转为有类型的对象用于验证
+    const object = plainToClass(metatype, value);
+
+    //根据 DTO 中的装饰器进行验证
+    const errors = await validate(object);
+
+    if (errors.length) {
+      const messages = errors.flatMap((error) => {
+        return deepError(error);
+      });
+
+      throw new MyException({ error: messages, code: '400' });
+    }
+    return value;
+  }
+}
+
+// main.ts
+app.useGlobalPipes(new ValidatePipe({ whitelist: false }));
+```

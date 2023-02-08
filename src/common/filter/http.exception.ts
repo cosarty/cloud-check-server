@@ -29,7 +29,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       });
       return;
     }
-
-    response.status(HttpStatus.INTERNAL_SERVER_ERROR).send('服务器错误');
+    console.log('exception: ', exception);
+    response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(exception);
   }
 }
