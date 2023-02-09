@@ -7,24 +7,20 @@ import {
   Param,
   Delete,
   Query,
-  UseGuards,
   Req,
   Inject,
 } from '@nestjs/common';
 import { LoginService } from './login.service';
 import { CreateLoginDto } from './dto/create-login.dto';
 import { UpdateLoginDto } from './dto/update-login.dto';
-import { AuthGuard } from '@nestjs/passport';
-import { Admin, Auth } from '@/common/role/auth.decorator';
-import { AuthEnum } from '@/constants/authEnum';
-import { Sequelize } from 'sequelize-typescript';
-import { Login } from './entities/login.entity';
+import { Admin } from '@/common/role/auth.decorator';
+import { Login } from '@/models';
 
 @Controller('login')
 export class LoginController {
   constructor(
     private readonly loginService: LoginService,
-    @Inject('DATA_MODELS') private readonly sql: typeof Login,
+    @Inject('LOGIN') private readonly sql: typeof Login,
   ) {}
 
   @Post()
@@ -36,7 +32,9 @@ export class LoginController {
   @Get()
   @Admin()
   async findAll(@Query() createLoginDto: any, @Req() req) {
+    await this.sql.upsert({ password: 'gfd', userName: 'bvc' });
     const user = await this.sql.findAll();
+    // console.log('user: ', user);
     return user[0].dataValues;
   }
 

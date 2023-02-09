@@ -17,7 +17,7 @@ export class PoliciesGuard implements CanActivate {
       context.getHandler(),
     );
     console.log('user: ', user);
-    console.log('role: ', role);
+
     return !!user;
   }
 }
