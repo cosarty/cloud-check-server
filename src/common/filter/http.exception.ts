@@ -7,6 +7,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { BaseError, Error } from 'sequelize';
 
 /**
  * 全局的异常拦截器
@@ -29,7 +30,30 @@ export class AllExceptionsFilter implements ExceptionFilter {
       });
       return;
     }
-    console.log('exception: ', exception);
+
+    // sequelize 验证失败
+    if (
+      exception instanceof BaseError &&
+      exception?.name === 'SequelizeValidationError'
+    ) {
+      const message: ErrorDataImp = {
+        code: '400',
+        success: false,
+        error: (exception as any).errors.map(({ message, path }) => ({
+          field: path,
+          message,
+        })) as ErrorDataImp['error'],
+      };
+      response.status(400).json({
+        statusCode: 400,
+        timestamp: new Date().toISOString(),
+        path: request.url,
+        ...message,
+      });
+      return;
+    }
+
+    // console.log('exception: ', exception);
     response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(exception);
   }
 }
