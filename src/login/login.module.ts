@@ -4,7 +4,7 @@ import { LoginController } from './login.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from '@/common/strategy/jwt.strategy';
-
+import { MailerModule } from '@nest-modules/mailer';
 @Module({
   imports: [
     JwtModule.registerAsync({
@@ -19,6 +19,11 @@ import { JwtStrategy } from '@/common/strategy/jwt.strategy';
           signOptions: { expiresIn: '30d' },
         };
       },
+    }),
+    MailerModule.forRootAsync({
+      useFactory: (config: ConfigService) => config.get('email'),
+      imports: [ConfigModule],
+      inject: [ConfigService],
     }),
   ],
   controllers: [LoginController],

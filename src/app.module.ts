@@ -4,12 +4,11 @@ import { AllExceptionsFilter } from './common/filter/http.exception';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
-import jwtConf from './config/jwt.conf';
+import * as config from './config';
 import { LoginModule } from './login/login.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { ResponseInterceptor } from './common/interceptor/response.interceptor';
-import databseConf from './config/databse.conf';
 
 @Module({
   imports: [
@@ -17,7 +16,7 @@ import databseConf from './config/databse.conf';
     LoginModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [jwtConf, databseConf],
+      load: [...Object.values(config)],
     }),
 
     // 限流
