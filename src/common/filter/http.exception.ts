@@ -53,7 +53,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       return;
     }
 
-    // console.log('exception: ', exception);
+    console.log('exception: ', exception);
     response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(exception);
   }
 }

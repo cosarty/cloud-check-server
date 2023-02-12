@@ -24,10 +24,10 @@ export class ResponseInterceptor implements NestInterceptor {
         };
 
         if (typeof res === 'object') {
-          const { message, ...data } = r;
-          if (!message) Object.assign(base, { data: { ...r } });
+          const { message, data } = r;
+          if (!message) Object.assign(base, { data: r });
           if (message) Object.assign(base, { message });
-          if (message && data.data) Object.assign(base, { data: data.data });
+          if (message && data) Object.assign(base, { data });
 
           return base;
         }
