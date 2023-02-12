@@ -6,7 +6,7 @@ import { Sequelize } from 'sequelize-typescript';
 export const SEQUELIZE_KEY = Symbol('SEQUELIZE');
 export const databaseProviders = [
   ...Object.keys(Model).map((m) => ({
-    provide: m.toUpperCase(),
+    provide: m.replace(/[A-Z]/g, (str) => `_${str}`).toUpperCase(),
     useValue: Model[m],
   })),
   {

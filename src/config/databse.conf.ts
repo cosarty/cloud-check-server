@@ -6,5 +6,5 @@ export default registerAs('database', () => ({
   port: 3306,
   username: 'root',
   password: 'root',
-  database: 'nest_test',
+  database: 'dianming',
 }));
