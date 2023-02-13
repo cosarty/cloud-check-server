@@ -54,34 +54,35 @@ export class LoginService {
         }),
     );
   }
-
-  // 获取验证码
-  async getCaptcha(email: string) {
-    let captcha: string;
-    // 判断一下邮件是否可以发送
+  // 判断一下邮件是否可以发送
+  async verifySendMall(email: string) {
     /**
      * 用户不存在或者 邮件未过期
      */
-
     const user = await this.user.findOne({ where: { email } });
-    if (user) return;
+    if (user) throw new MyException({ code: '400', error: '用户已注册' });
     const aut = await this.authCode.findOne({
+      order: [['createdAt', 'DESC']],
       where: {
         email,
-        expireTime: { [Op.gt]: dayjs().toDate() },
+        expireTime: { [Op.gt]: new Date() },
       },
     });
+    console.log('aut: ', aut);
+
     if (aut) {
       throw new MyException({
         code: '400',
-        error: `验证码还在有效期 请在${Number.parseInt(
-          dayjs
-            .duration(dayjs(aut.expireTime).diff(dayjs()))
-            .as('seconds')
-            .toString(),
+        error: `验证码还在有效期 请在${Math.ceil(
+          dayjs.duration(dayjs(aut.expireTime).diff(dayjs())).as('seconds'),
         )}秒后再试`,
       });
     }
+  }
+
+  // 获取注册验证码
+  async getCaptcha(email: string) {
+    let captcha: string;
 
     // 查找验证码是否存在
     while (true) {
@@ -102,7 +103,7 @@ export class LoginService {
     return captcha;
   }
 
-  // 邮件种类集合
+  // 邮件集合
   async senMailInvoke(
     { type, email }: SendMailDto,
     cb: (payload: unknown) => any,
@@ -110,11 +111,17 @@ export class LoginService {
     const checkSuccess = (info: any) => info.response.includes('250');
     switch (type) {
       case 'register':
+        // 判断是否可以发送邮件
+        await this.verifySendMall(email);
         const captcha = await this.getCaptcha(email);
         const isSuccess = checkSuccess(await cb({ captcha }));
         if (!isSuccess) return isSuccess;
         // 保存到数据库
-        const res = await this.authCode.create({ email, captcha });
+        const res = await this.authCode.create({
+          email,
+          captcha,
+          expireTime: dayjs().add(1, 'minute').toDate(),
+        });
         return !!res;
     }
   }
