@@ -39,7 +39,7 @@ export class LoginController {
     });
     if (!isSuccess)
       throw new MyException({ error: '服务器错误，发送失败', code: '400' });
-    return null;
+    return { message: '发送成功' };
     // this.sendMail();
   }
 }
