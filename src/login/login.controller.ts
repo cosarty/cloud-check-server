@@ -29,6 +29,7 @@ export class LoginController {
     return req.user;
   }
 
+  // 邮件发送
   @Post('sendMail')
   async sendMail(@Body() { email, type }: SendMailDto) {
     const isSuccess = await this.loginService.sendMail({

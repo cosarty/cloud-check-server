@@ -26,6 +26,7 @@ specifiers:
   argon2: ^0.30.3
   class-transformer: ^0.5.1
   class-validator: ^0.14.0
+  dayjs: ^1.11.7
   eslint: ^8.0.1
   eslint-config-prettier: ^8.3.0
   eslint-plugin-prettier: ^4.0.0
@@ -64,6 +65,7 @@ dependencies:
   argon2: 0.30.3
   class-transformer: 0.5.1
   class-validator: 0.14.0
+  dayjs: 1.11.7
   mysql2: 3.1.0
   nodemailer: 6.9.1
   passport: 0.6.0
