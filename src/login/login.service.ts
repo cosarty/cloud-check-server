@@ -68,8 +68,6 @@ export class LoginService {
         expireTime: { [Op.gt]: new Date() },
       },
     });
-    console.log('aut: ', aut);
-
     if (aut) {
       throw new MyException({
         code: '400',
