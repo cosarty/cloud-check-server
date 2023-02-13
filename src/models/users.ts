@@ -17,14 +17,14 @@ export class User extends Model<User> implements UserType {
   @Default(UUIDV4)
   @IsUUID('4')
   @Column
-  user_id: string;
+  userId: string;
   @Column
-  user_name: string;
+  userName: string;
   @IsEmail
   @Column
-  emial: string;
+  email: string;
   @Column
-  is_ban: boolean;
+  isBan: boolean;
   @Column
   auth: AuthType;
   @Column
@@ -45,4 +45,10 @@ export class User extends Model<User> implements UserType {
   @AllowNull
   @Column
   device: string;
+
+  @Column
+  isAdmin: boolean;
+
+  @Column
+  super: boolean;
 }

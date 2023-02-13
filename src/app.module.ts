@@ -1,24 +1,31 @@
 import { SequelizeModule } from './util/global/sequelize.module';
+import { StrategyModule } from './util/global/strategy.module';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { AllExceptionsFilter } from './common/filter/http.exception';
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import * as config from './config';
 import { LoginModule } from './login/login.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { ResponseInterceptor } from './common/interceptor/response.interceptor';
+import { MailerModule } from '@nest-modules/mailer';
 
 @Module({
   imports: [
     SequelizeModule,
+    StrategyModule,
     LoginModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [...Object.values(config)],
     }),
-
+    MailerModule.forRootAsync({
+      useFactory: (config: ConfigService) => config.get('email'),
+      imports: [ConfigModule],
+      inject: [ConfigService],
+    }),
     // 限流
     ThrottlerModule.forRoot({
       //每60秒
