@@ -3,14 +3,20 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-
+import * as argon2 from 'argon2';
+import { User } from '@/models/users';
+import { LoginDto } from '@/login/dto/create-user.dto';
 @ValidatorConstraint()
 export class IsConfirmedRule implements ValidatorConstraintInterface {
   async validate(value: string, args: ValidationArguments) {
-    return value === args.object[`${args.property}_confirmation`];
+    const email = (args.object as LoginDto).email;
+    const user = (await User.findOne({ where: { email } })) ?? ({} as any);
+    const isPass = await argon2.verify(user.password, value);
+    return isPass;
+    // return value === args.object[`${args.property}_confirmation`];
   }
 
   defaultMessage(args: ValidationArguments) {
-    return '数据不匹配';
+    return '密码错误';
   }
 }

@@ -11,21 +11,23 @@ import {
   Validate,
   MinLength,
   Length,
-  IsNumber,
+  Allow,
 } from 'class-validator';
 import { EmailRegister } from '@/common/rule/email-register.rule';
 import { ValidateCaptcha } from '@/common/rule/validate-captcha';
+import { PickType } from '@nestjs/mapped-types';
+import { IsConfirmedRule } from '@/common/rule/confirmation.rule';
 
 export class CreateUserDto implements UserType {
   @IsDefined({ message: '请输入邮箱' })
   @IsEmail({}, { message: '请输入合法邮箱' })
-  @Validate(EmailRegister)
+  @Validate(EmailRegister, ['register'])
   email?: string;
   @IsDefined({ message: '请选择身份' })
   @IsIn(['teacher', 'student', 'admin'], { message: '身份错误' })
   auth?: AuthType;
   @IsDefined({ message: '请选择性别' })
-  @IsIn([0,1],{message:'性别错误'})
+  @IsIn([0, 1], { message: '性别错误' })
   sex?: SexType;
   @IsDefined({ message: '请输入密码' })
   @IsString({ message: '密码为字符串类型' })
@@ -48,8 +50,20 @@ export class CreateUserDto implements UserType {
   @IsString({ message: '编号为字符串类型' })
   account?: string;
 
-  @IsString({message:'验证码是字符串类型'})
-  @Length(6,6,{message:'验证码的长度为6位'})
+  @IsString({ message: '验证码是字符串类型' })
+  @Length(6, 6, { message: '验证码的长度为6位' })
   @Validate(ValidateCaptcha)
-  captcha?:string
+  captcha?: string;
+}
+
+export class LoginDto extends PickType(CreateUserDto, ['email', 'password']) {
+  @IsDefined({ message: '请输入邮箱' })
+  @IsEmail({}, { message: '请输入合法邮箱' })
+  @Validate(EmailRegister, ['login'])
+  email?: string;
+
+  @IsDefined({ message: '请输入密码' })
+  @IsString({ message: '密码为字符串类型' })
+  @Validate(IsConfirmedRule)
+  password: string;
 }

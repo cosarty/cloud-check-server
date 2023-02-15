@@ -1,6 +1,6 @@
 import { Controller, Post, Body, Req } from '@nestjs/common';
 import { LoginService } from './login.service';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto, LoginDto } from './dto/create-user.dto';
 import { Admin } from '@/common/role/auth.decorator';
 import { Request } from 'express';
 import { SendMailDto } from './dto/sen-mail.dto';
@@ -24,9 +24,8 @@ export class LoginController {
   }
 
   @Post('login')
-  @Admin()
-  async login(@Req() req: Request, @Body() payload: any) {
-    return req.user;
+  async login(@Req() req: Request, @Body() payload: LoginDto) {
+    return await this.loginService.login(payload);
   }
 
   // 邮件发送

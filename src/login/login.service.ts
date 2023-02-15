@@ -32,7 +32,7 @@ export class LoginService {
       const hash = await argon2.hash(createLoginDto.password, {
         type: argon2.argon2d,
       });
-      const user = await this.user.create(
+      await this.user.create(
         { ...createLoginDto, password: hash },
         {
           fields: [
@@ -56,20 +56,26 @@ export class LoginService {
         },
       );
 
-      const u = await this.user.findOne({
-        attributes: { exclude: ['createdAt', 'updatedAt'] },
-        where: { email: createLoginDto.email },
-      });
-
       return {
         message: '注册成功',
-        data: { token: await this.jwtServe.signAsync({ user: u.toJSON() }) },
       };
     } catch (err) {
       console.log('err: ', err);
 
       new MyException({ code: '500', error: '注册失败' });
     }
+  }
+  async login(payload: CreateUserDto) {
+    const user = await this.user.findOne({
+      attributes: { exclude: ['updatedAt'] },
+      where: { email: payload.email },
+    });
+    return {
+      message: '登录成功',
+      data: {
+        token: await this.jwtServe.signAsync({ user: user.toJSON() }),
+      },
+    };
   }
 
   // 发送邮件

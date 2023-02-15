@@ -33,13 +33,7 @@ export class User extends Model<User> implements UserType {
   @Column
   sex: SexType;
   @Column
-  get password(): string {
-    return this.getDataValue('password');
-  }
-  // 密码加密
-  set password(paasword: string) {
-    this.setDataValue('password', this.password);
-  }
+  password: string;
   @AllowNull
   @Column
   account: string;

@@ -6,19 +6,23 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 
-
-
 @ValidatorConstraint()
-export class EmailRegister  implements ValidatorConstraintInterface {
-    async validate(value: string, args: ValidationArguments) {
+export class EmailRegister implements ValidatorConstraintInterface {
+  async validate(value: string, args: ValidationArguments) {
+    if (!value) return false;
+    const user = await User.findOne({ where: { email: value } });
+    if (args.constraints[0] === 'register') {
+      if (user) throw new MyException({ code: '403', error: '用户已注册' });
+      return true;
+    }
 
-    if(!value) return false
-   const user =  await  User.findOne({where:{email:value}})
-   if(user) throw new MyException({code:'403',error:'用户已注册'})
-    return !user
+    if (args.constraints[0] === 'login') {
+      if (!user) throw new MyException({ code: '403', error: '用户不存在' });
+      return true;
     }
-  
-    defaultMessage(args: ValidationArguments) {
-      return '用户已注册';
-    }
-    }
+  }
+
+  defaultMessage(args: ValidationArguments) {
+    return '错误';
+  }
+}
