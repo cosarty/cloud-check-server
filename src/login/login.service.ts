@@ -7,7 +7,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { SendMailDto } from './dto/sen-mail.dto';
 import * as randomString from 'random-string';
 import { Op } from 'sequelize';
-
+import * as argon2 from 'argon2';
 import * as dayjs from 'dayjs';
 import * as duration from 'dayjs/plugin/duration';
 
@@ -28,12 +28,48 @@ export class LoginService {
 
   // 注册
   async create(createLoginDto: CreateUserDto) {
-    console.log('createLoginDto: ', createLoginDto);
+    try {
+      const hash = await argon2.hash(createLoginDto.password, {
+        type: argon2.argon2d,
+      });
+      const user = await this.user.create(
+        { ...createLoginDto, password: hash },
+        {
+          fields: [
+            'userName',
+            'account',
+            'auth',
+            'auth',
+            'sex',
+            'email',
+            'password',
+          ],
+        },
+      );
+      await this.authCode.update(
+        { work: true },
+        {
+          where: {
+            email: createLoginDto.email,
+            captcha: createLoginDto.captcha,
+          },
+        },
+      );
 
-    return {
-      message: '获取成功',
-      data: { token: await this.jwtServe.signAsync({ user: { name: 'cxn' } }) },
-    };
+      const u = await this.user.findOne({
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
+        where: { email: createLoginDto.email },
+      });
+
+      return {
+        message: '注册成功',
+        data: { token: await this.jwtServe.signAsync({ user: u.toJSON() }) },
+      };
+    } catch (err) {
+      console.log('err: ', err);
+
+      new MyException({ code: '500', error: '注册失败' });
+    }
   }
 
   // 发送邮件

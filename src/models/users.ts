@@ -8,10 +8,12 @@ import {
   PrimaryKey,
   Default,
   IsUUID,
+  DefaultScope,
 } from 'sequelize-typescript';
 import { AuthType, SexType, UserType } from 'types';
-import argon2 from 'argon2';
+import * as argon2 from 'argon2';
 @Table({ tableName: 'user' })
+@DefaultScope(() => ({ attributes: { exclude: ['deletedAt'] } }))
 export class User extends Model<User> implements UserType {
   @PrimaryKey
   @Default(UUIDV4)
@@ -23,6 +25,7 @@ export class User extends Model<User> implements UserType {
   @IsEmail
   @Column
   email: string;
+  @Default(false)
   @Column
   isBan: boolean;
   @Column
@@ -35,9 +38,7 @@ export class User extends Model<User> implements UserType {
   }
   // 密码加密
   set password(paasword: string) {
-    argon2.hash(paasword, { type: argon2.argon2d }).then((hash) => {
-      this.setDataValue('password', hash);
-    });
+    this.setDataValue('password', this.password);
   }
   @AllowNull
   @Column
@@ -46,9 +47,11 @@ export class User extends Model<User> implements UserType {
   @Column
   device: string;
 
+  @Default(false)
   @Column
   isAdmin: boolean;
 
+  @AllowNull
   @Column
   super: boolean;
 }
