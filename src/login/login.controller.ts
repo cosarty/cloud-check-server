@@ -1,10 +1,11 @@
-import { Controller, Post, Body, Req } from '@nestjs/common';
+import { Controller, Post, Body, Req, Get } from '@nestjs/common';
 import { LoginService } from './login.service';
 import { CreateUserDto, LoginDto } from './dto/create-user.dto';
-import { Admin } from '@/common/role/auth.decorator';
+import { Admin, Auth } from '@/common/role/auth.decorator';
 import { Request } from 'express';
 import { SendMailDto } from './dto/sen-mail.dto';
 import { MyException } from '@/util/MyException';
+import { User } from '@/common/decorator/user.decorator';
 
 @Controller('genIn')
 export class LoginController {
@@ -40,5 +41,11 @@ export class LoginController {
       throw new MyException({ error: '服务器错误，发送失败', code: '400' });
     return { message: '发送成功' };
     // this.sendMail();
+  }
+
+  @Get('/getCurrent')
+  @Auth()
+  getCurrent(@User() user) {
+    return user;
   }
 }

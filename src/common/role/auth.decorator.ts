@@ -11,7 +11,7 @@ import { Role, ROLES_TYPE } from './role.decorator';
 import { PoliciesGuard } from '../guard/policies.guard';
 
 // 权限校验
-export const Auth = (role: ROLES_TYPE) =>
+export const Auth = (role?: ROLES_TYPE) =>
   applyDecorators(
     UseGuards(AuthGuard('jwt')),
     Role(role),

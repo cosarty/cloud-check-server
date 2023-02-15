@@ -67,7 +67,7 @@ export class LoginService {
   }
   async login(payload: CreateUserDto) {
     const user = await this.user.findOne({
-      attributes: { exclude: ['updatedAt'] },
+      attributes: { exclude: ['updatedAt', 'password'] },
       where: { email: payload.email },
     });
     return {
