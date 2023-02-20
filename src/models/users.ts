@@ -41,6 +41,10 @@ export class User extends Model<User> implements UserType {
   @Column
   device: string;
 
+  @AllowNull
+  @Column
+  classId: boolean;
+
   @Default(false)
   @Column
   isAdmin: boolean;
