@@ -11,6 +11,7 @@ import {
 } from 'class-validator';
 
 import { ClassType } from 'types/models';
+import { VrifyCodeRule } from '../rule/verify-code.rule';
 
 export class CreateClassDto implements ClassType {
   @IsOptional()
@@ -23,6 +24,7 @@ export class CreateClassDto implements ClassType {
 
   @IsDefined({ message: '请输入班级编号' })
   @IsInt({ message: '班级编号为整数' })
+  @Validate(VrifyCodeRule)
   code: number;
   @IsOptional()
   @IsString({ message: '备注为字符串类型' })

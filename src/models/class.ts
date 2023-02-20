@@ -8,6 +8,7 @@ import {
   Model,
   PrimaryKey,
   Table,
+  Unique,
 } from 'sequelize-typescript';
 import { User } from './users';
 
@@ -33,6 +34,9 @@ export class Class extends Model<Class> implements ClassType {
   picture: string;
 
   @IsInt
+  @Unique
   @Column
   code: number;
+
+  teacherId?: string;
 }

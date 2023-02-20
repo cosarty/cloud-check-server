@@ -1,8 +1,22 @@
-/*
-https://docs.nestjs.com/providers#services
-*/
-
-import { Injectable } from '@nestjs/common';
+import { ModelsEnum, PickModelType } from '@/models';
+import { MyException } from '@/util/MyException';
+import { Inject, Injectable } from '@nestjs/common';
+import { CreateClassDto } from './dto/create-class.dto';
 
 @Injectable()
-export class ClassService {}
+export class ClassService {
+  constructor(
+    @Inject(ModelsEnum.Class)
+    private readonly classModel: PickModelType<ModelsEnum.Class>,
+  ) {}
+  async createClass(classinfo: CreateClassDto) {
+    try {
+      const newclass = await this.classModel.create(classinfo, {
+        fields: ['code', 'className', 'picture', 'teacherId', 'remarks'],
+      });
+      return { message: '班级创建成功', data: newclass.toJSON() };
+    } catch (error) {
+      throw new MyException({ error: '班级创建失败', code: '500' });
+    }
+  }
+}
