@@ -24,7 +24,7 @@ export class CreateUserDto implements UserType {
   @Validate(EmailRegister, ['register'])
   email?: string;
   @IsDefined({ message: '请选择身份' })
-  @IsIn(['teacher', 'student', 'admin'], { message: '身份错误' })
+  @IsIn(['teacher', 'student'], { message: '身份错误' })
   auth?: AuthType;
   @IsDefined({ message: '请选择性别' })
   @IsIn([0, 1], { message: '性别错误' })

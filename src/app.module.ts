@@ -1,3 +1,4 @@
+import { ClassModule } from './class/class.module';
 import { SequelizeModule } from './util/global/sequelize.module';
 import { StrategyModule } from './util/global/strategy.module';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
@@ -14,6 +15,7 @@ import { MailerModule } from '@nest-modules/mailer';
 
 @Module({
   imports: [
+    ClassModule,
     SequelizeModule,
     StrategyModule,
     LoginModule,

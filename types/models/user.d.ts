@@ -12,4 +12,5 @@ export type UserType = {
   device?: string;
   isAdmin?: boolean;
   super?: boolean;
+  classId?: string;
 };

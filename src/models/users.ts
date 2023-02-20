@@ -43,7 +43,7 @@ export class User extends Model<User> implements UserType {
 
   @AllowNull
   @Column
-  classId: boolean;
+  classId: string;
 
   @Default(false)
   @Column
