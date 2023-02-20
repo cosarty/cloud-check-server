@@ -1,12 +1,22 @@
 import { MyException } from '@/util/MyException';
-import { HttpException, Injectable } from '@nestjs/common';
+import {
+  CACHE_MANAGER,
+  HttpException,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
-
+import { ExtractJwt, Strategy, JwtFromRequestFunction } from 'passport-jwt';
+import { Cache } from 'cache-manager';
+import { IncomingMessage } from 'node:http';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
-  constructor(private readonly config: ConfigService) {
+  constructor(
+    private readonly config: ConfigService,
+    @Inject(CACHE_MANAGER) private readonly cache: Cache,
+  ) {
     super({
       //解析用户提交的header中的Bearer Token数据
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -14,9 +24,11 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       secretOrKey: config.get('app.token_secret'),
     });
   }
-
-  async validate({ user }) {
-    // throw new MyException({ code: '400', error: '验证失败' });
-    return user;
+  async validate(payload) {
+    const isPass = await this.cache.get(
+      `${payload.user.userId}_${payload.exp}`,
+    );
+    if (isPass) throw new UnauthorizedException();
+    return payload;
   }
 }

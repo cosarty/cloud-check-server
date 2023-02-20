@@ -1,15 +1,27 @@
-import { Controller, Post, Body, Req, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Req,
+  Get,
+  Inject,
+  CACHE_MANAGER,
+} from '@nestjs/common';
 import { LoginService } from './login.service';
 import { CreateUserDto, LoginDto } from './dto/create-user.dto';
-import { Admin, Auth } from '@/common/role/auth.decorator';
+import { Auth } from '@/common/role/auth.decorator';
 import { Request } from 'express';
 import { SendMailDto } from './dto/sen-mail.dto';
 import { MyException } from '@/util/MyException';
 import { User } from '@/common/decorator/user.decorator';
+import { Cache } from 'cache-manager';
 
 @Controller('genIn')
 export class LoginController {
-  constructor(private readonly loginService: LoginService) {}
+  constructor(
+    private readonly loginService: LoginService,
+    @Inject(CACHE_MANAGER) private readonly cache: Cache,
+  ) {}
 
   // 注册接口
   /**
@@ -47,5 +59,15 @@ export class LoginController {
   @Auth()
   getCurrent(@User() user) {
     return user;
+  }
+
+  @Post('logout')
+  @Auth()
+  async logout(@Req() req: Request) {
+    const auth = req.headers['authorization'];
+    const { iat, exp, user } = req.user as any;
+    await this.cache.set(`${user.userId}_${exp}`, auth, exp - iat);
+
+    return { message: '退出成功' };
   }
 }
