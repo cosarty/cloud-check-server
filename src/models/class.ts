@@ -4,6 +4,7 @@ import {
   BelongsTo,
   Column,
   Default,
+  IsInt,
   Model,
   PrimaryKey,
   Table,
@@ -30,4 +31,8 @@ export class Class extends Model<Class> implements ClassType {
   @AllowNull
   @Column
   picture: string;
+
+  @IsInt
+  @Column
+  code: number;
 }

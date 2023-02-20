@@ -1,4 +1,10 @@
-import { Controller } from '@nestjs/common';
+import { Super } from '@/common/role/auth.decorator';
+import { Body, Controller, Post } from '@nestjs/common';
+import { CreateClassDto } from './dto/create-class.dto';
 
-@Controller()
-export class ClassController {}
+@Controller('class')
+export class ClassController {
+  @Post('create')
+  @Super()
+  createClass(@Body() createClass: CreateClassDto) {}
+}

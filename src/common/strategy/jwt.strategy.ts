@@ -11,6 +11,8 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy, JwtFromRequestFunction } from 'passport-jwt';
 import { Cache } from 'cache-manager';
 import { IncomingMessage } from 'node:http';
+import { User } from '@/models/users';
+
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
@@ -29,6 +31,10 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       `${payload.user.userId}_${payload.exp}`,
     );
     if (isPass) throw new UnauthorizedException();
+
+    const user = await User.findOne({ where: { userId: payload.user.userId } });
+    if (!user) return false;
+    payload.user = user.toJSON();
     return payload;
   }
 }

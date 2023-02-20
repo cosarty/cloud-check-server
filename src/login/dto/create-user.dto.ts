@@ -11,7 +11,6 @@ import {
   Validate,
   MinLength,
   Length,
-  Allow,
 } from 'class-validator';
 import { EmailRegister } from '@/common/rule/email-register.rule';
 import { ValidateCaptcha } from '@/common/rule/validate-captcha';

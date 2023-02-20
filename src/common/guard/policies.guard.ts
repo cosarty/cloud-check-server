@@ -12,7 +12,7 @@ export class PoliciesGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const { user } = context.switchToHttp().getRequest() as Request & {
-      user: UserType;
+      user: { user: UserType };
     };
     //获取聚合装饰器中的元信息
     const role = this.reflector.get<ROLES_TYPE>(
@@ -22,10 +22,12 @@ export class PoliciesGuard implements CanActivate {
 
     if (!role) return true;
     if (typeof role === 'string') {
-      return user.auth === role;
+      if (role === 'super') return user.user.super;
+      if (role === 'admin') user.user.auth === role || user.user.isAdmin;
+      return user.user.auth === role;
     }
     if (Array.isArray(role)) {
-      return role.includes(user.auth);
+      return role.includes(user.user.auth);
     }
 
     return false;
