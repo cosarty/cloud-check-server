@@ -11,12 +11,15 @@ import {
  */
 @ValidatorConstraint()
 export class VrifyIdentity implements ValidatorConstraintInterface {
-  async validate(value: string, args: ValidationArguments) {
+  async validate(value: string | string[], args: ValidationArguments) {
     if (!value) return false;
     const identity = args.constraints[0] as RoleType;
-    const user = await User.findOne({ where: { userId: value } });
-    if (!user || user.auth !== identity) return false;
-    return true;
+    value = Array.isArray(value) ? value : [value];
+    const user = await User.findAll({
+      where: { userId: value, auth: identity },
+    });
+    if (user.length === 0) return false;
+    return user.length === value.length;
   }
 
   defaultMessage(args: ValidationArguments) {

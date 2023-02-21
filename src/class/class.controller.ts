@@ -14,7 +14,11 @@ import {
 import { UserType } from 'types/models';
 import { ClassService } from './class.service';
 import { CreateClassDto } from './dto/create-class.dto';
-import { deleteClassDto, UpdateClassDto } from './dto/update-class.dto';
+import {
+  AddUserToClassDto,
+  deleteClassDto,
+  UpdateClassDto,
+} from './dto/update-class.dto';
 
 @Controller('class')
 @Auth()
@@ -23,6 +27,8 @@ export class ClassController {
     private readonly classService: ClassService,
     @Inject(ModelsEnum.Class)
     private readonly classModel: PickModelType<ModelsEnum.Class>,
+    @Inject(ModelsEnum.User)
+    private readonly user: PickModelType<ModelsEnum.User>,
   ) {}
   @Post('create')
   @Super()
@@ -60,5 +66,16 @@ export class ClassController {
   async deleteClass(@Param() payload: deleteClassDto) {
     await this.classModel.destroy({ where: { classId: payload.classId } });
     return { message: '删除成功' };
+  }
+
+  @Post('addUser')
+  @HttpCode(203)
+  async addUserToClass(@Body() payLoad: AddUserToClassDto) {
+    let { classId, userId } = payLoad;
+
+    userId = Array.isArray(userId) ? userId : [userId];
+    await this.user.update({ classId }, { where: { userId } });
+
+    return { message: '添加成功' };
   }
 }

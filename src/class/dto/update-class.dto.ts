@@ -22,7 +22,7 @@ export class deleteClassDto implements Partial<ClassType> {
   classId?: string;
 }
 
-export class addUserToClassDto {
+export class AddUserToClassDto {
   @IsDefined()
   @Validate(VrifyClassRule)
   classId?: string;
