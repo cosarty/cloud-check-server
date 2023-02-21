@@ -5,7 +5,7 @@ import {
 } from 'class-validator';
 import * as argon2 from 'argon2';
 import { User } from '@/models/users';
-import { LoginDto } from '@/login/dto/create-user.dto';
+import { LoginDto } from '@/module/login/dto/create-user.dto';
 @ValidatorConstraint()
 export class IsConfirmedRule implements ValidatorConstraintInterface {
   async validate(value: string, args: ValidationArguments) {

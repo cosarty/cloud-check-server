@@ -1,4 +1,4 @@
-import { ClassModule } from './class/class.module';
+import { ClassModule } from './module/class/class.module';
 import { SequelizeModule } from './util/global/sequelize.module';
 import { StrategyModule } from './util/global/strategy.module';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
@@ -7,7 +7,7 @@ import { CacheModule, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import * as config from './config';
-import { LoginModule } from './login/login.module';
+import { LoginModule } from './module/login/login.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { ResponseInterceptor } from './common/interceptor/response.interceptor';

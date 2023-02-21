@@ -1,4 +1,4 @@
-import { SendMailDto } from '@/login/dto/sen-mail.dto';
+import { SendMailDto } from '@/module/login/dto/sen-mail.dto';
 import { EmailTypeEnum, UserType } from '@/types';
 import {
   ValidationArguments,

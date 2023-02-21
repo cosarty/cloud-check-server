@@ -1,4 +1,4 @@
-import { VerifyPasswordRule } from './../../common/rule/verify-password.rule';
+import { VerifyPasswordRule } from '@/common/rule/verify-password.rule';
 import { AuthType, SexType, UserType } from '@/types';
 import {
   IsDefined,
