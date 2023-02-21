@@ -27,7 +27,13 @@ export class Class extends Model<Class> implements ClassType {
 
   @AllowNull
   @Column
-  remarks: string;
+  get remarks(): string {
+    return this.getDataValue('remarks') ?? '暂无备注';
+  }
+
+  // set remarks(value) {
+  //   this.setDataValue('remarks', value + '自定义');
+  // }
 
   @AllowNull
   @Column

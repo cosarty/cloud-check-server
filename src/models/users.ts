@@ -52,4 +52,8 @@ export class User extends Model<User> implements UserType {
   @AllowNull
   @Column
   super: boolean;
+
+  @AllowNull
+  @Column
+  pic: string;
 }

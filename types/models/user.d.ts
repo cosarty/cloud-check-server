@@ -13,4 +13,5 @@ export type UserType = {
   isAdmin?: boolean;
   super?: boolean;
   classId?: string;
+  pic?: string;
 };
