@@ -2,11 +2,19 @@ import { User } from '@/common/decorator/user.decorator';
 import { Auth, Super } from '@/common/role/auth.decorator';
 import { ModelsEnum, PickModelType } from '@/models';
 import { MyException } from '@/util/MyException';
-import { Body, Controller, Inject, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  HttpCode,
+  Inject,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { UserType } from 'types/models';
 import { ClassService } from './class.service';
 import { CreateClassDto } from './dto/create-class.dto';
-import { UpdateClassDto } from './dto/update-class.dto';
+import { deleteClassDto, UpdateClassDto } from './dto/update-class.dto';
 
 @Controller('class')
 @Auth()
@@ -44,5 +52,13 @@ export class ClassController {
       user.userId,
       user.isAdmin,
     );
+  }
+
+  @Delete('delete/:classId')
+  @Super()
+  @HttpCode(203)
+  async deleteClass(@Param() payload: deleteClassDto) {
+    await this.classModel.destroy({ where: { classId: payload.classId } });
+    return { message: '删除成功' };
   }
 }

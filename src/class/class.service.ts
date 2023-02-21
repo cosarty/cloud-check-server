@@ -33,6 +33,6 @@ export class ClassService {
         },
       },
     );
-    return { message: '更新成功' };
+    return { message: '更新成功', data: res };
   }
 }

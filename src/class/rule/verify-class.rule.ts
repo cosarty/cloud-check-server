@@ -18,6 +18,6 @@ export class VrifyClassRule implements ValidatorConstraintInterface {
     return !!classInfo;
   }
   defaultMessage(args: ValidationArguments) {
-    return '不存在此教室';
+    return '不存在此班级';
   }
 }

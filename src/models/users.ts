@@ -43,7 +43,9 @@ export class User extends Model<User> implements UserType {
 
   @AllowNull
   @Column
-  classId: string;
+  get classId(): string {
+    return this.getDataValue('classId') ?? '未加入班级';
+  }
 
   @Default(false)
   @Column
