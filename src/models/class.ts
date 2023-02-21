@@ -22,7 +22,10 @@ export class Class extends Model<Class> implements ClassType {
   @Column
   classId: string;
 
-  @BelongsTo(() => User, { targetKey: 'userId', foreignKey: 'teacherId' })
+  @BelongsTo(() => User, {
+    targetKey: 'userId',
+    foreignKey: 'teacherId',
+  })
   teacher: User;
 
   @AllowNull

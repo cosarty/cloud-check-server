@@ -2,6 +2,7 @@ import { ModelsEnum, PickModelType } from '@/models';
 import { MyException } from '@/util/MyException';
 import { Inject, Injectable } from '@nestjs/common';
 import { CreateClassDto } from './dto/create-class.dto';
+import { UpdateClassDto } from './dto/update-class.dto';
 
 @Injectable()
 export class ClassService {
@@ -18,5 +19,18 @@ export class ClassService {
     } catch (error) {
       throw new MyException({ error: '班级创建失败', code: '500' });
     }
+  }
+
+  async updateClass(payload: UpdateClassDto, userId: string, isAdmin: boolean) {
+    console.log('userId: ', userId);
+    console.log('payload: ', payload);
+    // 是管理员就更新全部
+    const res = await this.classModel.findOne({
+      where: { teacherId: userId, classId: payload.classId },
+      include: ['teacherId'],
+    });
+    console.log('res: ', res);
+
+    return { message: '更新成功' };
   }
 }

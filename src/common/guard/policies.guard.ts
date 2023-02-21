@@ -20,14 +20,18 @@ export class PoliciesGuard implements CanActivate {
       context.getHandler(),
     );
 
+    const validateRole = (role: ROLES_TYPE) => {
+      if (user.user.auth === role || user.user.super) return true;
+      if (role === 'admin') return user.user.isAdmin;
+      return false;
+    };
+
     if (!role) return true;
     if (typeof role === 'string') {
-      if (role === 'super') return user.user.super;
-      if (role === 'admin') user.user.auth === role || user.user.isAdmin;
-      return user.user.auth === role;
+      return validateRole(role);
     }
     if (Array.isArray(role)) {
-      return role.includes(user.user.auth);
+      return role.some((r) => validateRole(r));
     }
 
     return false;
