@@ -13,7 +13,7 @@ export class UpdateClassDto
   classId?: string;
 }
 
-// 添加学生到班级
+// 删除学生到班级
 // 更新学生信息
 // 上传图片
 export class deleteClassDto implements Partial<ClassType> {
