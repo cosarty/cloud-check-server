@@ -4,7 +4,8 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "assets": [
-      "template/email/*"
+      "template/email/*",
+      "static/**/*"
     ]
   }
 }
