@@ -21,16 +21,18 @@ export class ClassService {
     }
   }
 
+  // 更新班级
   async updateClass(payload: UpdateClassDto, userId: string, isAdmin: boolean) {
-    console.log('userId: ', userId);
-    console.log('payload: ', payload);
     // 是管理员就更新全部
-    const res = await this.classModel.findOne({
-      where: { teacherId: userId, classId: payload.classId },
-      include: ['teacherId'],
-    });
-    console.log('res: ', res);
-
+    const res = await this.classModel.update(
+      { remarks: payload.remarks, ...(isAdmin ? payload : {}) },
+      {
+        where: {
+          ...(!isAdmin ? { teacherId: userId } : {}),
+          classId: payload.classId,
+        },
+      },
+    );
     return { message: '更新成功' };
   }
 }
