@@ -57,7 +57,7 @@ export function Upload(
           filename: (req, file, callback) => {
             const path =
               Date.now() +
-              '-' +
+              '_' +
               (req.user as any).user.userId +
               extname(file.originalname);
             callback(null, path);

@@ -13,10 +13,13 @@ import {
 export class VrifyIdentity implements ValidatorConstraintInterface {
   async validate(value: string | string[], args: ValidationArguments) {
     if (!value) return false;
-    const identity = args.constraints[0] as RoleType;
+    const identity = args.constraints[0] as RoleType | 'all';
     value = Array.isArray(value) ? value : [value];
     const user = await User.findAll({
-      where: { userId: value, auth: identity },
+      where: {
+        userId: value,
+        ...(identity === 'all' ? {} : { auth: identity }),
+      },
     });
     if (user.length === 0) return false;
     return user.length === value.length;
