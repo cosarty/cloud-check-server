@@ -43,7 +43,6 @@ export class Class extends Model<Class> implements ClassType {
   picture: string;
 
   @IsInt
-  @Unique
   @Column
   code: number;
 

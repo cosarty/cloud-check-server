@@ -1,18 +1,16 @@
-import {
-  Controller,
-  Post,
-  UploadedFile,
-  UseInterceptors,
-} from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { Body, Controller, Post, UploadedFile } from '@nestjs/common';
 import { UploadService } from './upload.service';
+import { Image } from '@/common/decorator/upload.decorator';
+import { Auth } from '@/common/role/auth.decorator';
 
 @Controller('upload')
+@Auth()
 export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
   @Post('image')
-  @UseInterceptors(FileInterceptor('file'))
-  image(@UploadedFile() file: Express.Multer.File) {
+  @Image('userAvatarDir')
+  image(@UploadedFile() file: Express.Multer.File, @Body() upload) {
+    console.log('upload: ', upload);
     return file;
   }
 }
