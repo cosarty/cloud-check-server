@@ -3,8 +3,14 @@ import { registerAs } from '@nestjs/config';
 const uploadConf = registerAs('upload', () => ({
   root: 'static',
   base: {
-    classAvatarDir: 'image/class-avatar',
-    userAvatarDir: 'image/class-avatar',
+    classAvatarDir: {
+      private: 'image/class-avatar',
+      public: '/image', //虚拟目录
+    },
+    userAvatarDir: {
+      private: 'image/user-avatar',
+      public: '/image', //虚拟目录
+    },
   },
   mime: {
     image: ['png', 'jpg', 'gif', 'jpeg'],

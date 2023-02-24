@@ -32,7 +32,9 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     );
     if (isPass) throw new UnauthorizedException();
 
-    const user = await User.findOne({ where: { userId: payload.user.userId } });
+    const user = await User.findOne({
+      where: { userId: payload.user.userId, isBan: false },
+    });
     if (!user) return false;
     payload.user = user.toJSON();
     return payload;

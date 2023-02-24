@@ -21,6 +21,7 @@ export class UploadController {
     @Inject(ModelsEnum.User)
     private readonly user: PickModelType<ModelsEnum.User>,
   ) {}
+  // 上传用户头像
   @Post('userAvatarDir')
   @Image('userAvatarDir')
   async image(

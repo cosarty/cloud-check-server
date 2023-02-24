@@ -71,5 +71,9 @@ export function Upload(
 
 //图片上传
 export function Image(field: keyof UploadConfType['base']) {
-  return Upload(field, uploadConf().mime.image, uploadConf().base[field]);
+  return Upload(
+    field,
+    uploadConf().mime.image,
+    uploadConf().base[field].private,
+  );
 }

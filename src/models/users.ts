@@ -11,7 +11,7 @@ import {
   DefaultScope,
 } from 'sequelize-typescript';
 import { AuthType, SexType, UserType } from 'types';
-import * as argon2 from 'argon2';
+import uploadConf, { UploadConfType } from '@/config/upload.conf';
 @Table({ tableName: 'user' })
 @DefaultScope(() => ({ attributes: { exclude: ['deletedAt'] } }))
 export class User extends Model<User> implements UserType {
@@ -57,5 +57,12 @@ export class User extends Model<User> implements UserType {
 
   @AllowNull
   @Column
-  pic: string;
+  get pic(): string {
+    return this.getDataValue('pic')
+      ? process.env.HOST +
+          uploadConf().base['userAvatarDir'].public +
+          '/' +
+          this.getDataValue('pic')
+      : null;
+  }
 }

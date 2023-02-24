@@ -18,6 +18,7 @@ export class VrifyIdentity implements ValidatorConstraintInterface {
     const user = await User.findAll({
       where: {
         userId: value,
+        isBan: false,
         ...(identity === 'all' ? {} : { auth: identity }),
       },
     });
