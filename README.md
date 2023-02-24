@@ -121,3 +121,13 @@ export class ValidatePipe extends ValidationPipe {
 // main.ts
 app.useGlobalPipes(new ValidatePipe({ whitelist: false }));
 ```
+
+### nextjs 读取 form-data 类型的请求体
+
+**NestJS 提供了内置的 multipart/form-data parser，您可以使用 FileInterceptor 对其进行访问**
+
+```ts
+ @UseInterceptors(FileInterceptor('classId'))
+```
+
+一定要注意裝飾器的顺序

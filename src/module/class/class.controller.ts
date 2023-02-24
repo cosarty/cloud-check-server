@@ -71,6 +71,7 @@ export class ClassController {
   @Post('addUser')
   @HttpCode(203)
   async addUserToClass(@Body() payLoad: AddUserToClassDto) {
+    // eslint-disable-next-line prefer-const
     let { classId, userId } = payLoad;
 
     userId = Array.isArray(userId) ? userId : [userId];

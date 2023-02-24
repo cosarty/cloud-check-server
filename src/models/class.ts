@@ -8,9 +8,9 @@ import {
   Model,
   PrimaryKey,
   Table,
-  Unique,
 } from 'sequelize-typescript';
 import { User } from './users';
+import uploadConf from '@/config/upload.conf';
 
 @Table({ tableName: 'class', paranoid: true })
 export class Class extends Model<Class> implements ClassType {
@@ -40,7 +40,14 @@ export class Class extends Model<Class> implements ClassType {
 
   @AllowNull
   @Column
-  picture: string;
+  get picture(): string {
+    return this.getDataValue('picture')
+      ? process.env.HOST +
+          uploadConf().base['classAvatarDir'].public +
+          '/' +
+          this.getDataValue('picture')
+      : null;
+  }
 
   @IsInt
   @Column

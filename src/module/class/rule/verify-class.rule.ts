@@ -1,6 +1,4 @@
-import { RoleType } from '@/constants/authEnum';
 import { Class } from '@/models/class';
-import { User } from '@/models/users';
 import {
   ValidationArguments,
   ValidatorConstraint,
