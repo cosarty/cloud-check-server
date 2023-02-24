@@ -13,9 +13,6 @@ export class UpdateClassDto
   classId?: string;
 }
 
-// 删除学生到班级
-// 更新学生信息
-// 上传图片
 export class deleteClassDto implements Partial<ClassType> {
   @IsDefined()
   @Validate(VrifyClassRule)
@@ -31,4 +28,9 @@ export class AddUserToClassDto {
   @IsUUID('4', { message: '用户id错误', each: true })
   @Validate(VrifyIdentity, ['student'], { message: '不存在此学生' })
   userId: string | string[];
+}
+
+export class GetClassDto {
+  @Validate(VrifyClassRule)
+  classId: string;
 }

@@ -9,11 +9,18 @@ import {
   Default,
   IsUUID,
   DefaultScope,
+  HasOne,
+  BelongsTo,
+  Scopes,
 } from 'sequelize-typescript';
 import { AuthType, SexType, UserType } from 'types';
 import uploadConf, { UploadConfType } from '@/config/upload.conf';
+import { Class } from './class';
 @Table({ tableName: 'user' })
 @DefaultScope(() => ({ attributes: { exclude: ['deletedAt'] } }))
+@Scopes(() => ({
+  hidePassword: { attributes: { exclude: ['password'] } },
+}))
 export class User extends Model<User> implements UserType {
   @PrimaryKey
   @Default(UUIDV4)
@@ -46,6 +53,9 @@ export class User extends Model<User> implements UserType {
   get classId(): string {
     return this.getDataValue('classId') ?? '未加入班级';
   }
+
+  @BelongsTo(() => Class, { targetKey: 'classId', foreignKey: 'classId' })
+  class: Class;
 
   @Default(false)
   @Column

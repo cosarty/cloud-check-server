@@ -6,6 +6,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   HttpCode,
   Inject,
   Param,
@@ -17,8 +18,14 @@ import { CreateClassDto } from './dto/create-class.dto';
 import {
   AddUserToClassDto,
   deleteClassDto,
+  GetClassDto,
   UpdateClassDto,
 } from './dto/update-class.dto';
+
+// 删除学生到班级
+// 更新学生信息
+// 查看学生信息
+//
 
 @Controller('class')
 @Auth()
@@ -64,10 +71,17 @@ export class ClassController {
   @Super()
   @HttpCode(203)
   async deleteClass(@Param() payload: deleteClassDto) {
-    await this.classModel.destroy({ where: { classId: payload.classId } });
+    await this.user.update(
+      { classId: null },
+      { where: { classId: payload.classId } },
+    );
+    await this.classModel.destroy({
+      where: { classId: payload.classId },
+    });
     return { message: '删除成功' };
   }
 
+  // 添加用户
   @Post('addUser')
   @HttpCode(203)
   async addUserToClass(@Body() payLoad: AddUserToClassDto) {
@@ -76,7 +90,26 @@ export class ClassController {
 
     userId = Array.isArray(userId) ? userId : [userId];
     await this.user.update({ classId }, { where: { userId } });
-
     return { message: '添加成功' };
+  }
+
+  @Get('/get/:classId')
+  async getClass(@Param() payload: GetClassDto) {
+    const classInfo = await this.classModel.findOne({
+      where: { classId: payload.classId },
+    });
+    // 只有管理员,班级的学生
+    return { message: '获取成功', data: classInfo.toJSON() };
+  }
+
+  @Get('/getUsers/:classId')
+  async getUsers(@Param() payload: GetClassDto) {
+    const users = await this.user.scope('hidePassword').findAll({
+      where: { classId: payload.classId },
+      attributes: {
+        exclude: ['classId', 'super', 'isAdmin', 'isBan'],
+      },
+    });
+    return { message: '获取成功', data: users.map((s) => s.toJSON()) };
   }
 }
