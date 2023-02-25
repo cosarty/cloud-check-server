@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 import { User } from '@/common/decorator/user.decorator';
 import { Auth, Super } from '@/common/role/auth.decorator';
 import { ModelsEnum, PickModelType } from '@/models';
@@ -18,14 +19,13 @@ import { CreateClassDto } from './dto/create-class.dto';
 import {
   AddUserToClassDto,
   deleteClassDto,
+  DelUserToClassDto,
   GetClassDto,
   UpdateClassDto,
 } from './dto/update-class.dto';
 
 // 删除学生到班级
 // 更新学生信息
-// 查看学生信息
-//
 
 @Controller('class')
 @Auth()
@@ -111,5 +111,14 @@ export class ClassController {
       },
     });
     return { message: '获取成功', data: users.map((s) => s.toJSON()) };
+  }
+
+  // 删除学生到班级
+  @Delete('/delUsers')
+  async delUsers(@Body() payload: DelUserToClassDto) {
+    let { classId, userId } = payload;
+    userId = Array.isArray(userId) ? userId : [userId];
+    await this.user.update({ classId: null }, { where: { userId, classId } });
+    return { message: '删除成功' };
   }
 }

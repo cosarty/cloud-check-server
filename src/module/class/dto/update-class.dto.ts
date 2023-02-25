@@ -1,6 +1,6 @@
 import { VrifyIdentity } from '@/common/rule/verify-identity.rule';
 import { ClassType } from '@/types';
-import { PartialType } from '@nestjs/mapped-types';
+import { PartialType, PickType } from '@nestjs/mapped-types';
 import { IsDefined, isDefined, IsUUID, Validate } from 'class-validator';
 import { VrifyClassRule } from '../rule/verify-class.rule';
 import { CreateClassDto } from './create-class.dto';
@@ -34,3 +34,8 @@ export class GetClassDto {
   @Validate(VrifyClassRule)
   classId: string;
 }
+
+export class DelUserToClassDto extends PickType(AddUserToClassDto, [
+  'classId',
+  'userId',
+]) {}
