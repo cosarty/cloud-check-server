@@ -55,12 +55,6 @@ export class LoginController {
     // this.sendMail();
   }
 
-  @Get('/getCurrent')
-  @Auth()
-  getCurrent(@User() user) {
-    return user;
-  }
-
   @Post('logout')
   @Auth()
   async logout(@Req() req: Request) {

@@ -31,6 +31,25 @@ const course = {
   code: String, // 邀请码
 };
 
+// 星期枚举
+const weekNum = [
+  'sunday',
+  'monday',
+  'tuesday ',
+  'wednesday',
+  'thursday ',
+  'friday',
+  'saturday',
+];
+// 班级课程表
+const classSchedule = {
+  classId: String,
+  courseId: String,
+  starDate: Date,
+  week: Number, // 持续几周
+  schooltime: {}, // weekNum []
+};
+
 // 签到统计
 const statInfo = {
   statId: String,

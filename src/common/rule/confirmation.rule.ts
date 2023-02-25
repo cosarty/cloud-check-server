@@ -13,6 +13,7 @@ export class IsConfirmedRule implements ValidatorConstraintInterface {
     const user = (await User.findOne({ where: { email } })) ?? ({} as any);
     if (!user.password) return false;
     const isPass = await argon2.verify(user.password, value);
+
     return isPass;
     // return value === args.object[`${args.property}_confirmation`];
   }

@@ -24,8 +24,9 @@ import {
   UpdateClassDto,
 } from './dto/update-class.dto';
 
-// 删除学生到班级
-// 更新学生信息
+/**
+ * // TODO 统计班级签到信息
+ */
 
 @Controller('class')
 @Auth()

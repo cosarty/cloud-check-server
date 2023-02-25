@@ -1,3 +1,4 @@
+import { UserModule } from './module/user/user.module';
 import { UploadModule } from './module/upload/upload.module';
 import { ClassModule } from './module/class/class.module';
 import { SequelizeModule } from './util/global/sequelize.module';
@@ -16,6 +17,7 @@ import { MailerModule } from '@nest-modules/mailer';
 
 @Module({
   imports: [
+    UserModule,
     UploadModule,
     ClassModule,
     SequelizeModule,
