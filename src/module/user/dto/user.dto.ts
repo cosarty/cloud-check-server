@@ -1,6 +1,8 @@
 import { IsConfirmedRule } from '@/common/rule/confirmation.rule';
 import { EmailRegister } from '@/common/rule/email-register.rule';
 import { VerifyPasswordRule } from '@/common/rule/verify-password.rule';
+import { AddUserToClassDto } from '@/module/class/dto/update-class.dto';
+import { PickType } from '@nestjs/mapped-types';
 import {
   IsDefined,
   IsEmail,
@@ -26,3 +28,5 @@ export class UpdatePasswordDto {
   @Validate(EmailRegister, ['login'])
   email?: string;
 }
+
+export class BindUserDto extends PickType(AddUserToClassDto, ['userId']) {}
