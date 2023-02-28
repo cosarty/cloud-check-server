@@ -14,4 +14,5 @@ export type UserType = {
   super?: boolean;
   classId?: string;
   pic?: string;
+  departmentId?: string;
 };

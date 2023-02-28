@@ -16,6 +16,7 @@ import {
 import { AuthType, SexType, UserType } from 'types';
 import uploadConf, { UploadConfType } from '@/config/upload.conf';
 import { Class } from './class';
+import { Department } from './department';
 @Table({ tableName: 'user' })
 @DefaultScope(() => ({ attributes: { exclude: ['deletedAt'] } }))
 @Scopes(() => ({
@@ -75,4 +76,10 @@ export class User extends Model<User> implements UserType {
           this.getDataValue('pic')
       : null;
   }
+
+  @BelongsTo(() => Department, {
+    targetKey: 'departmentId',
+    foreignKey: 'departmentId',
+  })
+  department: string;
 }
