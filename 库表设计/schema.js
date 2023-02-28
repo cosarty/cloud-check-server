@@ -1,3 +1,5 @@
+const { stringify } = require("ts-jest");
+
 //  数据库表
 const user = {
   userId: String,
@@ -43,6 +45,7 @@ const weekNum = [
 ];
 // 班级课程表
 const classSchedule = {
+  classScheduleId:String,
   classId: String,
   courseId: String,
   starDate: Date,    
@@ -53,12 +56,11 @@ const classSchedule = {
 // 签到统计
 const statInfo = {
   statId: String,
-  courseId: String,
-  useId: String,
+  classScheduleId: String,
+  userId: String,
   statTime: Date,
   tagetScope: Number, // 签到距离
   signOutTime: Date, //签退时间
-  isDelete: Boolean,
 };
 
 // 签到任务
@@ -80,10 +82,12 @@ const singTask = {
 
 // 课程人员表  多对多  多主键
 const coursePerson = {
+  coursePersonId:String,
   userId: String,
-  courseId: String,
+  classScheduleId: String,
+  count:Number,
   integral: String,
-  isBan: Boolean, // 拉黑
+
 };
 
 // 区域采集 
@@ -91,6 +95,8 @@ const area = {
   areaId: String,
   areaName: String,
   location: String,
+  userId:String,
+  
 };
 
 const classTable = {

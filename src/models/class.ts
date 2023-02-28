@@ -10,6 +10,7 @@ import {
 } from 'sequelize-typescript';
 import { User } from './users';
 import uploadConf from '@/config/upload.conf';
+import { Department } from './department';
 
 export type ClassType = {
   className: string;
@@ -60,6 +61,12 @@ export class Class extends Model<Class> implements ClassType {
   @IsInt
   @Column
   code: number;
+
+  @BelongsTo(() => Department, {
+    targetKey: 'departmentId',
+    foreignKey: 'departmentId',
+  })
+  department: string;
 
   teacherId?: string;
 }
