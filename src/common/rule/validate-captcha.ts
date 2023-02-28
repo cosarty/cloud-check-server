@@ -1,5 +1,6 @@
 import { SendMailDto } from '@/module/login/dto/sen-mail.dto';
-import { EmailTypeEnum, UserType } from '@/types';
+import { UserType } from '@/models/users';
+import { EmailTypeEnum } from 'types';
 import {
   ValidationArguments,
   ValidatorConstraint,

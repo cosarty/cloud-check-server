@@ -8,8 +8,12 @@ import {
   PrimaryKey,
   Table,
 } from 'sequelize-typescript';
-import { DepartmentType } from 'types';
 import { User } from './users';
+export type DepartmentType = {
+  departmentId: string;
+  departmentName: string;
+  userId: string;
+};
 @Table({ tableName: 'department' })
 export class Department
   extends Model<DepartmentType>

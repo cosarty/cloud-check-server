@@ -9,7 +9,7 @@ import { Body, Controller, Get, Inject, Post } from '@nestjs/common';
 import { BindUserDto, UpdatePasswordDto } from './dto/user.dto';
 import * as argon2 from 'argon2';
 import { ModelsEnum, PickModelType } from '@/models';
-import { UserType } from 'types/models';
+import { UserType } from '@/models/users';
 // 更新用户
 
 @Controller('user')

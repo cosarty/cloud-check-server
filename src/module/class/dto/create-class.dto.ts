@@ -10,7 +10,7 @@ import {
   Validate,
 } from 'class-validator';
 
-import { ClassType } from 'types/models';
+import { ClassType } from '@/models/class';
 import { VrifyCodeRule } from '../rule/verify-code.rule';
 
 export class CreateClassDto implements ClassType {

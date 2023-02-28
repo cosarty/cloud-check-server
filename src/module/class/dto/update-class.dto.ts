@@ -1,5 +1,5 @@
 import { VrifyIdentity } from '@/common/rule/verify-identity.rule';
-import { ClassType } from '@/types';
+import { ClassType } from '@/models/class';
 import { PartialType, PickType } from '@nestjs/mapped-types';
 import { IsDefined, isDefined, IsUUID, Validate } from 'class-validator';
 import { VrifyClassRule } from '../rule/verify-class.rule';

@@ -13,7 +13,7 @@ import {
   Param,
   Post,
 } from '@nestjs/common';
-import { UserType } from 'types/models';
+import { UserType } from '@/models/users';
 import { ClassService } from './class.service';
 import { CreateClassDto } from './dto/create-class.dto';
 import {

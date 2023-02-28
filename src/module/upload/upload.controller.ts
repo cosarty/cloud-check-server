@@ -12,7 +12,7 @@ import { UploadService } from './upload.service';
 import { Image } from '@/common/decorator/upload.decorator';
 import { Auth } from '@/common/role/auth.decorator';
 import { User } from '@/common/decorator/user.decorator';
-import { UserType } from 'types/models';
+import { UserType } from '@/models/users';
 import { ModelsEnum, PickModelType } from '@/models';
 import { UploadClassAvatar } from './dto/upload.dto';
 import { FileInterceptor } from '@nestjs/platform-express';

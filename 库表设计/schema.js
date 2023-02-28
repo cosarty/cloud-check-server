@@ -11,15 +11,6 @@ const user = {
   password: String,
   account: String, // 学号
   device: String, // 设备
-  isAdmin: boolean,
-  super: boolean,
-  pic: String,
-  departmentId: string, // 系管理员  判断是否存在departmentId 那就是系管理员
-
-  /**
-   * auth === admin 是系统管理员
-
-   */
 };
 
 const auth_code = {
@@ -27,13 +18,6 @@ const auth_code = {
   email: String,
   captach: String,
   work: String,
-};
-
-// 系只能超级管理员来弄
-const department = {
-  departmentId: string,
-  departmentName: String,
-  userId: Strig, // 系管理员
 };
 
 // 课程信息表
@@ -44,6 +28,7 @@ const course = {
   isDelete: Boolean,
   userId: String, // 课程创建者
   comment: String, // 注释信息
+  code: String, // 邀请码
 };
 
 // 星期枚举
@@ -58,11 +43,9 @@ const weekNum = [
 ];
 // 班级课程表
 const classSchedule = {
-  scheduleId:String,
   classId: String,
   courseId: String,
-  teacherId: String,
-  starDate: Date,
+  starDate: Date,    
   week: Number, // 持续几周
   schooltime: {}, // weekNum []
 };
@@ -70,7 +53,7 @@ const classSchedule = {
 // 签到统计
 const statInfo = {
   statId: String,
-  scheduleId: String,
+  courseId: String,
   useId: String,
   statTime: Date,
   tagetScope: Number, // 签到距离
@@ -95,7 +78,15 @@ const singTask = {
   isPeriod: Boolean, // 是否开启定时任务
 };
 
-// 区域采集
+// 课程人员表  多对多  多主键
+const coursePerson = {
+  userId: String,
+  courseId: String,
+  integral: String,
+  isBan: Boolean, // 拉黑
+};
+
+// 区域采集 
 const area = {
   areaId: String,
   areaName: String,

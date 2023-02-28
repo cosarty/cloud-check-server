@@ -3,7 +3,7 @@ import { Request } from 'express';
 import { Observable } from 'rxjs';
 import { Class } from '@/models/class';
 import { MyException } from '@/util/MyException';
-import { UserType } from 'types/models';
+import { UserType } from '@/models/users';
 @Injectable()
 export class VerifyClassGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {

@@ -1,4 +1,3 @@
-import { ClassType } from '@/types';
 import {
   AllowNull,
   BelongsTo,
@@ -11,6 +10,15 @@ import {
 } from 'sequelize-typescript';
 import { User } from './users';
 import uploadConf from '@/config/upload.conf';
+
+export type ClassType = {
+  className: string;
+  classId?: string;
+  teacherId?: string;
+  remarks?: string;
+  picture?: string;
+  code: number; // 班级编号
+};
 
 @Table({ tableName: 'class', paranoid: true })
 export class Class extends Model<Class> implements ClassType {

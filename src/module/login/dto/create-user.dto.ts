@@ -1,5 +1,5 @@
 import { VerifyPasswordRule } from '@/common/rule/verify-password.rule';
-import { AuthType, SexType, UserType } from '@/types';
+import { AuthType, SexType, UserType } from '@/models/users';
 import {
   IsDefined,
   IsIn,
