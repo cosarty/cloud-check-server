@@ -3,7 +3,6 @@ import {
   Post,
   Body,
   Req,
-  Get,
   Inject,
   CACHE_MANAGER,
 } from '@nestjs/common';

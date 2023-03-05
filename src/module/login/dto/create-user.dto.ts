@@ -57,8 +57,8 @@ export class CreateUserDto implements UserType {
 
 export class LoginDto extends PickType(CreateUserDto, ['email', 'password']) {
   @IsDefined({ message: '请输入邮箱' })
-  @IsEmail({}, { message: '请输入合法邮箱' })
   @Validate(EmailRegister, ['login'])
+  @IsEmail({}, { message: '请输入合法邮箱' })
   email?: string;
 
   @IsDefined({ message: '请输入密码' })

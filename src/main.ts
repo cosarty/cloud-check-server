@@ -9,7 +9,7 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors();
   app.setGlobalPrefix('api', {
-    //排除/路由
+  // 排除/路由
     exclude: ['/'],
   });
 

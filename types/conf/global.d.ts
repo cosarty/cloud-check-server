@@ -10,6 +10,7 @@ export type ErrorDataImp = {
   code: `${HttpStatus}`;
   error: ValidateErrInfo[] | string;
   success?: boolean;
+  [k: string]: any;
 };
 
 // 校验错误的基本结构
