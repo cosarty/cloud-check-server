@@ -7,7 +7,7 @@ import {
   PrimaryKey,
   Table,
 } from 'sequelize-typescript';
-import { User } from 'types/models';
+import { User } from '@/models/users';
 import { ClassSchedule } from './classSchedule';
 
 export interface SingTaskType {
@@ -24,7 +24,7 @@ export interface SingTaskType {
   integral: number; // 签到分数
   assign: string; //  指派人
   period: string; // 周期  月m 日d 周w  定时任务周期
-  isPeriod: Boolean; // 是否开启定时任务
+  isPeriod: boolean; // 是否开启定时任务
 }
 
 // 签到任务
@@ -59,5 +59,5 @@ export class SingTask extends Model<SingTask> implements SingTaskType {
   @Column
   period: string;
   @Column
-  isPeriod: Boolean;
+  isPeriod: boolean;
 }

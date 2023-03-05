@@ -7,7 +7,7 @@ import {
   PrimaryKey,
   Table,
 } from 'sequelize-typescript';
-import { User } from 'types/models';
+import { User } from '@/models/users';
 
 export interface AreaType {
   areaId: string;
