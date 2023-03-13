@@ -1,5 +1,4 @@
 import { Controller, Get } from '@nestjs/common';
-import { testClient } from './clinent';
 import { Data } from '../types';
 @Controller()
 export class AppController {
@@ -7,7 +6,7 @@ export class AppController {
 
   @Get()
   async getHello() {
-  return   await testClient();
+  return   'hello';
 
   }
 }

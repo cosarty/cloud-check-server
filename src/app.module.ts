@@ -1,3 +1,5 @@
+
+import { DetecFaceModule } from './module/detecFace/detecface.module';
 import { UserModule } from './module/user/user.module';
 import { UploadModule } from './module/upload/upload.module';
 import { ClassModule } from './module/class/class.module';
@@ -17,6 +19,7 @@ import { MailerModule } from '@nest-modules/mailer';
 
 @Module({
   imports: [
+    DetecFaceModule,
     UserModule,
     UploadModule,
     ClassModule,
@@ -43,7 +46,7 @@ import { MailerModule } from '@nest-modules/mailer';
   ],
   controllers: [AppController],
   providers: [
-    {
+        {
       // 全局异常过滤器
       provide: APP_FILTER,
       useClass: AllExceptionsFilter,

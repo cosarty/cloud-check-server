@@ -24,6 +24,7 @@
     "@alicloud/facebody20191230": "^4.0.7",
     "@alicloud/openapi-client": "^0.4.5",
     "@alicloud/tea-util": "^1.4.5",
+    "@alicloud/viapi-utils": "^1.0.0",
     "@nest-modules/mailer": "^1.3.22",
     "@nestjs-modules/mailer": "^1.8.1",
     "@nestjs/common": "^9.0.0",
