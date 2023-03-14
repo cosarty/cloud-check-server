@@ -34,6 +34,12 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 
     const user = await User.scope('hidePassword').findOne({
       where: { userId: payload.user.userId, isBan: false },
+      include: [
+        {
+          association: 'class',
+          attributes: ['classId', 'code', 'className', 'departmentId'],
+        },
+      ],
     });
     if (!user) return false;
     payload.user = user.toJSON();

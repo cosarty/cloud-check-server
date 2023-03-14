@@ -37,6 +37,16 @@ export class UserController {
     return { message: '更新成功' };
   }
 
+  @Post('update')
+  @Auth()
+  async updateUser(@Body() payload: UserType, @User() user) {
+    await this.user.update(
+      { sex: payload.sex },
+      { where: { userId: user.userId } },
+    );
+    return { message: '更新成功' };
+  }
+
   @Post('bind')
   @Auth(['super'])
   async bindUser(@User() user: UserType, @Body() payload: BindUserDto) {

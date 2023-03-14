@@ -49,10 +49,10 @@ export class CreateUserDto implements UserType {
   @IsString({ message: '编号为字符串类型' })
   account?: string;
 
-  @IsString({ message: '验证码是字符串类型' })
-  @Length(6, 6, { message: '验证码的长度为6位' })
-  @Validate(ValidateCaptcha)
-  captcha?: string;
+  // @IsString({ message: '验证码是字符串类型' })
+  // @Length(6, 6, { message: '验证码的长度为6位' })
+  // @Validate(ValidateCaptcha)
+  // captcha?: string;
 }
 
 export class LoginDto extends PickType(CreateUserDto, ['email', 'password']) {

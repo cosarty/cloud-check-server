@@ -51,7 +51,7 @@ export class LoginService {
         {
           where: {
             email: createLoginDto.email,
-            captcha: createLoginDto.captcha,
+            // captcha: createLoginDto.captcha,
           },
         },
       );
