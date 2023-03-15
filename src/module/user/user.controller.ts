@@ -1,16 +1,23 @@
 import { UpdateEmailDto } from './dto/user.dto';
-/*
-https://docs.nestjs.com/controllers#controllers
-*/
 
 import { User } from '@/common/decorator/user.decorator';
 import { Auth } from '@/common/role/auth.decorator';
-
-import { Body, Controller, Get, Inject, Post } from '@nestjs/common';
+import * as svgCaptcha from 'svg-captcha';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Post,
+  Req,
+  Res,
+  Session,
+} from '@nestjs/common';
 import { BindUserDto, UpdatePasswordDto } from './dto/user.dto';
 import * as argon2 from 'argon2';
 import { ModelsEnum, PickModelType } from '@/models';
 import { UserType } from '@/models/users';
+import { MyException } from '@/util/MyException';
 // 更新用户
 
 @Controller('user')
@@ -29,7 +36,16 @@ export class UserController {
 
   @Post('updatePassword')
   @Auth()
-  async updatePassword(@Body() payload: UpdatePasswordDto, @User() user) {
+  async updatePassword(
+    @Body() payload: UpdatePasswordDto,
+    @User() user,
+    @Session() session,
+  ) {
+    console.log(session.code);
+
+    if (session.code !== payload.capacha) {
+      throw new MyException({ code: '400', error: '验证码错误' });
+    }
     const hash = await argon2.hash(payload.newPassword, {
       type: argon2.argon2d,
     });
@@ -37,7 +53,7 @@ export class UserController {
       { password: hash },
       { where: { email: user.email } },
     );
-    return { message: '更新成功' };
+    return { message: '密码更新，成功请重新登录' };
   }
 
   // 更新用户
@@ -79,5 +95,19 @@ export class UserController {
       { where: { email: user.email } },
     );
     return null;
+  }
+
+  @Get('code')
+  userCode(@Req() req, @Res() res) {
+    const captcha = svgCaptcha.create({
+      size: 4, //生成几个验证码
+      fontSize: 50, //文字大小
+      width: 100, //宽度
+      height: 34, //高度
+      background: '#cc9966', //背景颜色
+    });
+    req.session.code = captcha.text; //存储验证码记录到session
+    res.type('image/svg+xml');
+    res.send(captcha.data);
   }
 }

@@ -21,9 +21,17 @@ export class UpdatePasswordDto {
   @Validate(VerifyPasswordRule)
   newPassword: string;
 
+  @IsDefined({ message: '请输入邮箱' })
+  @IsEmail({}, { message: '请输入合法邮箱' })
+  @Validate(EmailRegister, ['login'])
+  email: string;
+
   @IsDefined({ message: '请输入确认密码' })
   @Validate(IsConfirmedRule)
   oldPassword: string;
+
+  @IsDefined({ message: '请输入验证码' })
+  capacha: string;
 }
 
 export class BindUserDto extends PickType(AddUserToClassDto, ['userId']) {}
