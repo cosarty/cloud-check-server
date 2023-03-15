@@ -1,3 +1,4 @@
+import { UpdateEmailDto } from './dto/user.dto';
 /*
 https://docs.nestjs.com/controllers#controllers
 */
@@ -17,6 +18,8 @@ export class UserController {
   constructor(
     @Inject(ModelsEnum.User)
     private readonly user: PickModelType<ModelsEnum.User>,
+    @Inject(ModelsEnum.AuthCode)
+    private readonly authCode: PickModelType<ModelsEnum.AuthCode>,
   ) {}
   @Get('getCurrent')
   @Auth()
@@ -26,17 +29,18 @@ export class UserController {
 
   @Post('updatePassword')
   @Auth()
-  async updatePassword(@Body() payload: UpdatePasswordDto) {
+  async updatePassword(@Body() payload: UpdatePasswordDto, @User() user) {
     const hash = await argon2.hash(payload.newPassword, {
       type: argon2.argon2d,
     });
     await this.user.update(
       { password: hash },
-      { where: { email: payload.email } },
+      { where: { email: user.email } },
     );
     return { message: '更新成功' };
   }
 
+  // 更新用户
   @Post('update')
   @Auth()
   async updateUser(@Body() payload: UserType, @User() user) {
@@ -56,5 +60,24 @@ export class UserController {
       { where: { userId: payload.userId } },
     );
     return { message: '封号成功' };
+  }
+
+  // 更改邮箱
+  @Post('updateEmail')
+  @Auth()
+  async updateEmail(@Body() payload: UpdateEmailDto, @User() user) {
+    await this.user.update(
+      { email: payload.email },
+      { where: { userId: user.userId } },
+    );
+    await this.authCode.update(
+      { work: false },
+      { where: { email: payload.email } },
+    );
+    await this.authCode.update(
+      { work: true },
+      { where: { email: user.email } },
+    );
+    return null;
   }
 }

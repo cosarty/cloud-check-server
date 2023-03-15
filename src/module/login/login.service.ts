@@ -39,7 +39,6 @@ export class LoginService {
             'userName',
             'account',
             'auth',
-            'auth',
             'sex',
             'email',
             'password',

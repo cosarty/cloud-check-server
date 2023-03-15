@@ -12,12 +12,12 @@ export class EmailRegister implements ValidatorConstraintInterface {
     if (!value) return false;
     const user = await User.findOne({ where: { email: value } });
     if (args.constraints[0] === 'register') {
-      if (user) throw new MyException({ code: '403', error: '用户已注册' });
+      if (user) throw new MyException({ code: '400', error: '用户已注册' });
       return true;
     }
 
     if (args.constraints[0] === 'login') {
-      if (!user) throw new MyException({ code: '403', error: '用户不存在' });
+      if (!user) throw new MyException({ code: '400', error: '用户不存在' });
       return true;
     }
   }
