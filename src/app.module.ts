@@ -1,3 +1,4 @@
+import { DepartmentModule } from './module/department/department.module';
 
 import { DetecFaceModule } from './module/detecFace/detecface.module';
 import { UserModule } from './module/user/user.module';
@@ -19,6 +20,7 @@ import { MailerModule } from '@nest-modules/mailer';
 
 @Module({
   imports: [
+    DepartmentModule,
     DetecFaceModule,
     UserModule,
     UploadModule,
@@ -46,7 +48,7 @@ import { MailerModule } from '@nest-modules/mailer';
   ],
   controllers: [AppController],
   providers: [
-        {
+    {
       // 全局异常过滤器
       provide: APP_FILTER,
       useClass: AllExceptionsFilter,

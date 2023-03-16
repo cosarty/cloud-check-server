@@ -1,7 +1,7 @@
 import { UpdateEmailDto } from './dto/user.dto';
 
 import { User } from '@/common/decorator/user.decorator';
-import { Auth } from '@/common/role/auth.decorator';
+import { Auth, Super } from '@/common/role/auth.decorator';
 import * as svgCaptcha from 'svg-captcha';
 import {
   Body,
@@ -96,7 +96,6 @@ export class UserController {
     );
     return null;
   }
-
   @Get('code')
   userCode(@Req() req, @Res() res) {
     const captcha = svgCaptcha.create({
@@ -109,5 +108,12 @@ export class UserController {
     req.session.code = captcha.text; //存储验证码记录到session
     res.type('image/svg+xml');
     res.send(captcha.data);
+  }
+
+  // 获取老师列表
+  @Get('getTeacher')
+  @Super()
+  async getTeacher() {
+    return await this.user.scope('hidePassword').findAll({ where: { auth: 'teacher' } });
   }
 }

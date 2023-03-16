@@ -9,6 +9,7 @@ import {
   Table,
 } from 'sequelize-typescript';
 import { User } from './users';
+import { nanoid } from 'nanoid';
 export type DepartmentType = {
   departmentId: string;
   departmentName: string;
@@ -20,7 +21,7 @@ export class Department
   implements DepartmentType
 {
   @PrimaryKey
-  @Default(Math.floor(new Date().getTime() + Math.random() * 9 * 10000))
+  @Default(nanoid()) 
   @Column
   departmentId: string;
 
