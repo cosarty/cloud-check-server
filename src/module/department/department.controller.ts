@@ -22,9 +22,7 @@ export class DepartmentController {
   @Post('create')
   @Super()
   async create(@User() user, @Body() payload) {
-    console.log('user: ', user);
     console.log('payload: ', payload);
-
     await this.department.create(
       { ...payload },
       { fields: ['departmentName', 'userId'] },
@@ -36,7 +34,7 @@ export class DepartmentController {
   @Get('get')
   @Super()
   async getDepartment() {
-    const data = await this.department.findAll();
+    const data = await this.department.findAll({ include: ['user'] });
 
     return data;
   }
@@ -45,6 +43,7 @@ export class DepartmentController {
   @Put('update')
   @Super()
   async update(@Body() payload) {
+    console.log('payload: ', payload);
     await this.department.update(
       { ...payload },
       { where: { departmentId: payload.id } },
@@ -56,7 +55,7 @@ export class DepartmentController {
   // 删除系
   @Delete('del/:id')
   @Super()
-  async del(@Param() {id}) {
+  async del(@Param() { id }) {
     await this.department.destroy({
       where: {
         departmentId: id,

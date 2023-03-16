@@ -9,7 +9,8 @@ import {
   Table,
 } from 'sequelize-typescript';
 import { User } from './users';
-import { nanoid } from 'nanoid';
+import { getId } from '@/util/utils';
+import { UUIDV4 } from 'sequelize';
 export type DepartmentType = {
   departmentId: string;
   departmentName: string;
@@ -21,7 +22,7 @@ export class Department
   implements DepartmentType
 {
   @PrimaryKey
-  @Default(nanoid()) 
+  @Default(UUIDV4)
   @Column
   departmentId: string;
 
