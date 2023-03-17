@@ -11,6 +11,7 @@ import {
 import { User } from './users';
 import uploadConf from '@/config/upload.conf';
 import { Department } from './department';
+import { UUIDV4 } from 'sequelize';
 
 export type ClassType = {
   className: string;
@@ -27,7 +28,7 @@ export class Class extends Model<Class> implements ClassType {
   className: string;
 
   @PrimaryKey
-  @Default(new Date().getTime())
+  @Default(UUIDV4)
   @Column
   classId: string;
 

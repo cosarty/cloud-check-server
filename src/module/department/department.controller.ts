@@ -43,7 +43,6 @@ export class DepartmentController {
   @Put('update')
   @Super()
   async update(@Body() payload) {
-    console.log('payload: ', payload);
     await this.department.update(
       { ...payload },
       { where: { departmentId: payload.id } },

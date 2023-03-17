@@ -35,4 +35,8 @@ export class ClassService {
     );
     return { message: '更新成功', data: res };
   }
+
+  async getClassList() {
+    return await this.classModel.findAll()
+  }
 }

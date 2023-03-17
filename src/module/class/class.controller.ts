@@ -122,4 +122,11 @@ export class ClassController {
     await this.user.update({ classId: null }, { where: { userId, classId } });
     return { message: '删除成功' };
   }
+
+  /** @description 获取班级列表 */
+  @Get('getList')
+  @Auth()
+  async getClassList() {
+    return await this.classService.getClassList();
+  }
 }
