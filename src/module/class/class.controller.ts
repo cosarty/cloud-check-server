@@ -12,6 +12,7 @@ import {
   Inject,
   Param,
   Post,
+  Query,
 } from '@nestjs/common';
 import { UserType } from '@/models/users';
 import { ClassService } from './class.service';
@@ -126,7 +127,7 @@ export class ClassController {
   /** @description 获取班级列表 */
   @Get('getList')
   @Auth()
-  async getClassList() {
-    return await this.classService.getClassList();
+  async getClassList(@Query() pram: any) {
+    return await this.classService.getClassList(pram);
   }
 }

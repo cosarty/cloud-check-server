@@ -36,7 +36,10 @@ export class ClassService {
     return { message: '更新成功', data: res };
   }
 
-  async getClassList() {
-    return await this.classModel.findAll()
+  async getClassList({ pageCount, pageSize }) {
+    return await this.classModel.findAndCountAll({
+      limit: Number(pageSize),
+      offset: Number((pageCount - 1) * pageSize),
+    });
   }
 }
