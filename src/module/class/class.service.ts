@@ -1,6 +1,7 @@
 import { ModelsEnum, PickModelType } from '@/models';
 import { MyException } from '@/util/MyException';
 import { Inject, Injectable } from '@nestjs/common';
+import { Op } from 'sequelize';
 import { CreateClassDto } from './dto/create-class.dto';
 import { UpdateClassDto } from './dto/update-class.dto';
 
@@ -36,10 +37,28 @@ export class ClassService {
     return { message: '更新成功', data: res };
   }
 
-  async getClassList({ pageCount, pageSize }) {
+  async getClassList({
+    pageCount,
+    pageSize,
+    departmentId,
+    className,
+    teacher,
+  }) {
     return await this.classModel.findAndCountAll({
       limit: Number(pageSize),
       offset: Number((pageCount - 1) * pageSize),
+      where: {
+        ...(departmentId ? { departmentId } : {}),
+        ...(className ? { className: { [Op.substring]: className } } : {}),
+      },
+      include: [
+        {
+          association: 'teacher',
+          ...(teacher
+            ? { where: { userName: { [Op.substring]: teacher } } }
+            : {}),
+        },
+      ],
     });
   }
 }

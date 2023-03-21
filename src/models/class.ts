@@ -71,5 +71,7 @@ export class Class extends Model<Class> implements ClassType {
   })
   department: string;
 
+  departmentId?: string;
+
   teacherId?: string;
 }

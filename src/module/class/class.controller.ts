@@ -128,6 +128,7 @@ export class ClassController {
   @Get('getList')
   @Auth()
   async getClassList(@Query() pram: any) {
+    console.log('pram: ', pram);
     return await this.classService.getClassList(pram);
   }
 }
