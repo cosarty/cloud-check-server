@@ -18,6 +18,10 @@ export class DepartmentController {
   constructor(
     @Inject(ModelsEnum.Department)
     private readonly department: PickModelType<ModelsEnum.Department>,
+    @Inject(ModelsEnum.Class)
+    private readonly classModel: PickModelType<ModelsEnum.Class>,
+    @Inject(ModelsEnum.User)
+    private readonly user: PickModelType<ModelsEnum.User>,
   ) {}
   @Post('create')
   @Super()
@@ -55,7 +59,12 @@ export class DepartmentController {
   @Delete('del/:id')
   @Super()
   async del(@Param() { id }) {
-    await this.department.destroy({
+    await this.classModel.destroy({
+      where: {
+        departmentId: id,
+      },
+    });
+    await await this.department.destroy({
       where: {
         departmentId: id,
       },

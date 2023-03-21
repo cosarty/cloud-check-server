@@ -14,7 +14,14 @@ export class ClassService {
   async createClass(classinfo: CreateClassDto) {
     try {
       const newclass = await this.classModel.create(classinfo, {
-        fields: ['code', 'className', 'picture', 'teacherId', 'remarks'],
+        fields: [
+          'code',
+          'className',
+          'picture',
+          'teacherId',
+          'remarks',
+          'departmentId',
+        ],
       });
       return { message: '班级创建成功', data: newclass.toJSON() };
     } catch (error) {
@@ -23,13 +30,18 @@ export class ClassService {
   }
 
   // 更新班级
-  async updateClass(payload: UpdateClassDto, userId: string, isAdmin: boolean) {
+  async updateClass(
+    payload: UpdateClassDto,
+    userId: string,
+    isAdmin: boolean,
+    isSuper: boolean,
+  ) {
     // 是管理员就更新全部
     const res = await this.classModel.update(
       { remarks: payload.remarks, ...(isAdmin ? payload : {}) },
       {
         where: {
-          ...(!isAdmin ? { teacherId: userId } : {}),
+          ...(!isAdmin && !isSuper ? { teacherId: userId } : {}),
           classId: payload.classId,
         },
       },
@@ -43,20 +55,26 @@ export class ClassService {
     departmentId,
     className,
     teacher,
+    createdAt,
   }) {
     return await this.classModel.findAndCountAll({
+      order: [['createdAt', createdAt || 'DESC']],
       limit: Number(pageSize),
       offset: Number((pageCount - 1) * pageSize),
       where: {
         ...(departmentId ? { departmentId } : {}),
         ...(className ? { className: { [Op.substring]: className } } : {}),
       },
+
       include: [
         {
           association: 'teacher',
           ...(teacher
             ? { where: { userName: { [Op.substring]: teacher } } }
             : {}),
+        },
+        {
+          association: 'department',
         },
       ],
     });

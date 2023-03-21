@@ -24,7 +24,7 @@ export type ClassType = {
 };
 
 @Table({ tableName: 'class', paranoid: true })
-@DefaultScope(() => ({ order: [['createdAt', 'DESC']] }))
+// @DefaultScope(() => ({ order: [['createdAt', 'DESC']] }))
 export class Class extends Model<Class> implements ClassType {
   @Column
   className: string;

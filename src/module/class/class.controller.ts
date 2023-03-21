@@ -66,6 +66,7 @@ export class ClassController {
       payload,
       user.userId,
       user.isAdmin,
+      user.super,
     );
   }
 
@@ -129,6 +130,8 @@ export class ClassController {
   @Auth()
   async getClassList(@Query() pram: any) {
     console.log('pram: ', pram);
-    return await this.classService.getClassList(pram);
+
+    const data = await this.classService.getClassList(pram);
+    return data;
   }
 }
