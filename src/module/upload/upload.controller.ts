@@ -17,6 +17,7 @@ import { ModelsEnum, PickModelType } from '@/models';
 import { UploadClassAvatar } from './dto/upload.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { VerifyClassGuard } from './guard/verify-class.guard';
+import uploadConf from '@/config/upload.conf';
 
 @Controller('upload')
 export class UploadController {
@@ -49,18 +50,25 @@ export class UploadController {
    * @param payload
    * @returns
    */
-  @Post('classAvatarDir/:classId')
-  @UseGuards(VerifyClassGuard)
+  @Post('classAvatarDir')
+  // @UseGuards(VerifyClassGuard)
   @Auth(['admin', 'teacher'])
   @Image('classAvatarDir')
   async classAvatarDir(
-    @Param() payload: UploadClassAvatar,
+    // @Param() payload: UploadClassAvatar,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    await this.classMod.update(
-      { picture: file.filename },
-      { where: { classId: payload.classId } },
-    );
-    return { message: '更新成功' };
+    // await this.classMod.update(
+    //   { picture: file.filename },
+    //   { where: { classId: payload.classId } },
+    // );
+    return {
+      message: '上传成功',
+      data:
+        process.env.HOST +
+        uploadConf().base['classAvatarDir'].public +
+        '/' +
+        file.filename,
+    };
   }
 }

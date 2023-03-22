@@ -100,20 +100,23 @@ export class ClassController {
   async getClass(@Param() payload: GetClassDto) {
     const classInfo = await this.classModel.findOne({
       where: { classId: payload.classId },
+      include: ['teacher'],
     });
     // 只有管理员,班级的学生
-    return { message: '获取成功', data: classInfo.toJSON() };
+    return classInfo.toJSON();
   }
 
   @Get('/getUsers/:classId')
-  async getUsers(@Param() payload: GetClassDto) {
-    const users = await this.user.scope('hidePassword').findAll({
+  async getUsers(@Param() payload: any, @Query() pram: any) {
+    const users = await this.user.scope('hidePassword').findAndCountAll({
       where: { classId: payload.classId },
       attributes: {
         exclude: ['classId', 'super', 'isAdmin', 'isBan'],
       },
+      limit: Number(pram.pageSize),
+      offset: Number((pram.pageCount - 1) * pram.pageSize),
     });
-    return { message: '获取成功', data: users.map((s) => s.toJSON()) };
+    return users;
   }
 
   // 删除学生到班级
@@ -129,8 +132,6 @@ export class ClassController {
   @Get('getList')
   @Auth()
   async getClassList(@Query() pram: any) {
-    console.log('pram: ', pram);
-
     const data = await this.classService.getClassList(pram);
     return data;
   }

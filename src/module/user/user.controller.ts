@@ -9,6 +9,7 @@ import {
   Get,
   Inject,
   Post,
+  Query,
   Req,
   Res,
   Session,
@@ -114,6 +115,23 @@ export class UserController {
   @Get('getTeacher')
   @Super()
   async getTeacher() {
-    return await this.user.scope('hidePassword').findAll({ where: { auth: 'teacher' } });
+    return await this.user
+      .scope('hidePassword')
+      .findAll({ where: { auth: 'teacher' } });
+  }
+
+  // 获取学生列表
+  @Get('getstudent')
+  @Super()
+  async getStudent(@Query() pram: any) {
+    return await this.user.scope('hidePassword').findAndCountAll({
+      where: {
+        auth: 'student',
+        ...(pram.flag === 'all' ? {} : { classId: null }),
+      },
+
+      limit: Number(pram.pageSize),
+      offset: Number((pram.pageCount - 1) * pram.pageSize),
+    });
   }
 }

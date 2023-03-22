@@ -38,7 +38,7 @@ export class ClassService {
   ) {
     // 是管理员就更新全部
     const res = await this.classModel.update(
-      { remarks: payload.remarks, ...(isAdmin ? payload : {}) },
+      { remarks: payload.remarks, ...(isAdmin || isSuper ? payload : {}) },
       {
         where: {
           ...(!isAdmin && !isSuper ? { teacherId: userId } : {}),
