@@ -43,6 +43,7 @@ export class LoginService {
             'email',
             'password',
             'classId',
+            'pic',
           ],
         },
       );

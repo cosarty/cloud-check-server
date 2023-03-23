@@ -69,6 +69,14 @@ export class UserController {
     return { message: '更新成功' };
   }
 
+  // 编辑用户
+  @Post('updateUser')
+  @Auth(['admin', 'super'])
+  async updateOtheUser(@Body() { userId, ...res }: UserType) {
+    await this.user.update({ ...res }, { where: { userId } });
+    return { message: '更新成功' };
+  }
+
   @Post('bind')
   @Auth(['super', 'admin'])
   async bindUser(@User() user: UserType, @Body() payload: any) {

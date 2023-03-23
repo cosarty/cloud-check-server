@@ -38,12 +38,12 @@ import { MailerModule } from '@nest-modules/mailer';
       inject: [ConfigService],
     }),
     // 限流
-    ThrottlerModule.forRoot({
-      //每60秒
-      ttl: 10,
-      //限制接口访问10次
-      limit: 10,
-    }),
+    // ThrottlerModule.forRoot({
+    //   //每60秒
+    //   ttl: 10,
+    //   //限制接口访问10次
+    //   limit: 10,
+    // }),
     CacheModule.register({ isGlobal: true }),
   ],
   controllers: [AppController],
@@ -53,11 +53,11 @@ import { MailerModule } from '@nest-modules/mailer';
       provide: APP_FILTER,
       useClass: AllExceptionsFilter,
     },
-    {
-      // 全局限流守卫
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard,
-    },
+    // {
+    //   // 全局限流守卫
+    //   provide: APP_GUARD,
+    //   useClass: ThrottlerGuard,
+    // },
     {
       provide: APP_INTERCEPTOR,
       useClass: ResponseInterceptor,

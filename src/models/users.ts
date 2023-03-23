@@ -70,7 +70,7 @@ export class User extends Model<User> implements UserType {
   @AllowNull
   @Column
   get classId(): string {
-    return this.getDataValue('classId') ?? '未加入班级';
+    return this.getDataValue('classId');
   }
 
   @BelongsTo(() => Class, { targetKey: 'classId', foreignKey: 'classId' })
