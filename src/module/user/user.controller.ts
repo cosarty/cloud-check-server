@@ -82,7 +82,7 @@ export class UserController {
 
   @Post('delete')
   @Auth(['super'])
-  async deleteUser(@User() user: UserType, @Body() payload: BindUserDto) {
+  async deleteUser(@User() user: UserType, @Body() payload: any) {
     // 封号 要清空班级 删除课程
     await this.user.destroy({ where: { userId: payload.userId } });
     return { message: '删除成功' };
@@ -133,7 +133,9 @@ export class UserController {
         ...(pram.userName
           ? { userName: { [Op.substring]: pram.userName } }
           : {}),
+        ...(pram.flag === 'all' ? {} : { isAdmin: false }),
       },
+
       include: {
         association: 'class',
         include: [
@@ -174,5 +176,16 @@ export class UserController {
       limit: Number(pram.pageSize),
       offset: Number((pram.pageCount - 1) * pram.pageSize),
     });
+  }
+
+  @Post('setAdmin')
+  @Auth(['super'])
+  async setAdmin(@User() user: UserType, @Body() payload: any) {
+    // 封号 要清空班级 删除课程
+    await this.user.update(
+      { isAdmin: payload.isAdmin },
+      { where: { userId: payload.userId } },
+    );
+    return { message: payload.isAdmin ? '设置成功' : '取消成功' };
   }
 }

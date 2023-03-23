@@ -17,7 +17,8 @@ export class EmailRegister implements ValidatorConstraintInterface {
     }
 
     if (args.constraints[0] === 'login') {
-      if (!user) throw new MyException({ code: '400', error: '用户不存在' });
+      if (!user || user.isBan)
+        throw new MyException({ code: '400', error: '用户不存在' });
       return true;
     }
   }

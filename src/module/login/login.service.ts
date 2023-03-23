@@ -3,7 +3,7 @@ import { ModelsEnum, PickModelType } from '@/models';
 import { MailerService } from '@nest-modules/mailer';
 import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto, LoginDto } from './dto/create-user.dto';
 import { SendMailDto } from './dto/sen-mail.dto';
 import * as randomString from 'random-string';
 import { Op } from 'sequelize';
@@ -65,7 +65,7 @@ export class LoginService {
       new MyException({ code: '500', error: '注册失败' });
     }
   }
-  async login(payload: CreateUserDto) {
+  async login(payload: LoginDto) {
     const user = await this.user.findOne({
       attributes: { exclude: ['updatedAt', 'password'] },
       where: { email: payload.email },
