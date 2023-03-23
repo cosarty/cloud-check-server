@@ -29,7 +29,7 @@ export const databaseProviders = [
 
       sequelize.addModels([...Object.values(models)] as any);
       // await sequelize.sync({ logging: false, force: false, alter: true });
-      // await sequelize.sync({ logging: false , force: true });
+      // await sequelize.sync({ logging: false, alter: true });
       return sequelize;
     },
   },
