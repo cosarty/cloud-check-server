@@ -59,8 +59,8 @@ export class ClassService {
   }) {
     return await this.classModel.findAndCountAll({
       order: [['createdAt', createdAt || 'DESC']],
-      limit: Number(pageSize),
-      offset: Number((pageCount - 1) * pageSize),
+      ...(pageSize ? { limit: Number(pageSize) ?? 0 } : {}),
+      ...(pageCount ? { offset: Number((pageCount - 1) * pageSize) ?? 0 } : {}),
       where: {
         ...(departmentId ? { departmentId } : {}),
         ...(className ? { className: { [Op.substring]: className } } : {}),

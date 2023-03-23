@@ -19,6 +19,7 @@ import * as argon2 from 'argon2';
 import { ModelsEnum, PickModelType } from '@/models';
 import { UserType } from '@/models/users';
 import { MyException } from '@/util/MyException';
+import { Op } from 'sequelize';
 // 更新用户
 
 @Controller('user')
@@ -69,14 +70,22 @@ export class UserController {
   }
 
   @Post('bind')
-  @Auth(['super'])
-  async bindUser(@User() user: UserType, @Body() payload: BindUserDto) {
+  @Auth(['super', 'admin'])
+  async bindUser(@User() user: UserType, @Body() payload: any) {
     // 封号 要清空班级 删除课程
     await this.user.update(
-      { isBan: true },
+      { isBan: payload.isBan },
       { where: { userId: payload.userId } },
     );
-    return { message: '封号成功' };
+    return { message: payload.isBan ? '封号成功' : '解封成功' };
+  }
+
+  @Post('delete')
+  @Auth(['super'])
+  async deleteUser(@User() user: UserType, @Body() payload: BindUserDto) {
+    // 封号 要清空班级 删除课程
+    await this.user.destroy({ where: { userId: payload.userId } });
+    return { message: '删除成功' };
   }
 
   // 更改邮箱
@@ -113,23 +122,55 @@ export class UserController {
 
   // 获取老师列表
   @Get('getTeacher')
-  @Super()
-  async getTeacher() {
-    return await this.user
-      .scope('hidePassword')
-      .findAll({ where: { auth: 'teacher' } });
+  @Auth(['super', 'admin'])
+  async getTeacher(@Query() pram: any) {
+    return await this.user.scope('hidePassword').findAndCountAll({
+      order: [['createdAt', 'DESC']],
+      where: {
+        auth: 'teacher',
+        ...(pram.flag === 'all' ? {} : { classId: null }),
+        ...(pram.account ? { account: { [Op.substring]: pram.account } } : {}),
+        ...(pram.userName
+          ? { userName: { [Op.substring]: pram.userName } }
+          : {}),
+      },
+      include: {
+        association: 'class',
+        include: [
+          {
+            association: 'department',
+          },
+        ],
+      },
+      ...(pram.pageSize ? { limit: Number(pram.pageSize) ?? 0 } : {}),
+      ...(pram.pageCount
+        ? { offset: Number((pram.pageCount - 1) * pram.pageSize) ?? 0 }
+        : {}),
+    });
   }
 
   // 获取学生列表
   @Get('getstudent')
-  @Super()
+  @Auth(['super', 'admin'])
   async getStudent(@Query() pram: any) {
     return await this.user.scope('hidePassword').findAndCountAll({
+      order: [['createdAt', 'DESC']],
       where: {
         auth: 'student',
         ...(pram.flag === 'all' ? {} : { classId: null }),
+        ...(pram.account ? { account: { [Op.substring]: pram.account } } : {}),
+        ...(pram.userName
+          ? { userName: { [Op.substring]: pram.userName } }
+          : {}),
       },
-
+      include: {
+        association: 'class',
+        include: [
+          {
+            association: 'department',
+          },
+        ],
+      },
       limit: Number(pram.pageSize),
       offset: Number((pram.pageCount - 1) * pram.pageSize),
     });

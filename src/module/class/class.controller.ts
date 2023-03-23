@@ -24,6 +24,7 @@ import {
   GetClassDto,
   UpdateClassDto,
 } from './dto/update-class.dto';
+import { Op } from 'sequelize';
 
 /**
  * // TODO 统计班级签到信息
@@ -109,7 +110,13 @@ export class ClassController {
   @Get('/getUsers/:classId')
   async getUsers(@Param() payload: any, @Query() pram: any) {
     const users = await this.user.scope('hidePassword').findAndCountAll({
-      where: { classId: payload.classId },
+      where: {
+        classId: payload.classId,
+        ...(pram.account ? { account: { [Op.substring]: pram.account } } : {}),
+        ...(pram.userName
+          ? { userName: { [Op.substring]: pram.userName } }
+          : {}),
+      },
       attributes: {
         exclude: ['classId', 'super', 'isAdmin', 'isBan'],
       },

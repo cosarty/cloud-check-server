@@ -31,7 +31,7 @@ export class LoginController {
    * @returns
    */
   @Post('register')
-  async register(@Body() createUser: CreateUserDto) {
+  async register(@Body() createUser: any) {
     return this.loginService.create(createUser);
   }
 

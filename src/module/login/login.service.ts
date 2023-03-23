@@ -29,7 +29,7 @@ export class LoginService {
   // 注册
   async create(createLoginDto: CreateUserDto) {
     try {
-      const hash = await argon2.hash(createLoginDto.password, {
+      const hash = await argon2.hash(createLoginDto.password ?? '12345678', {
         type: argon2.argon2d,
       });
       await this.user.create(
@@ -42,6 +42,7 @@ export class LoginService {
             'sex',
             'email',
             'password',
+            'classId',
           ],
         },
       );
@@ -56,7 +57,7 @@ export class LoginService {
       );
 
       return {
-        message: '注册成功',
+        message: '添加成功',
       };
     } catch (err) {
       console.log('err: ', err);
