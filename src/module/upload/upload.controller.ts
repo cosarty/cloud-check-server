@@ -86,4 +86,18 @@ export class UploadController {
         file.filename,
     };
   }
+
+  @Post('courseAvatarDir')
+  @Auth()
+  @Image('courseAvatarDir')
+  async courseAvatarDir(@UploadedFile() file: Express.Multer.File) {
+    return {
+      message: '上传成功',
+      data:
+        process.env.HOST +
+        uploadConf().base['courseAvatarDir'].public +
+        '/' +
+        file.filename,
+    };
+  }
 }

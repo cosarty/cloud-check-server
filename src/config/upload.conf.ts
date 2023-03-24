@@ -11,6 +11,10 @@ const uploadConf = registerAs('upload', () => ({
       private: 'image/user-avatar',
       public: '/image', //虚拟目录
     },
+    courseAvatarDir: {
+      private: 'image/course-avatar',
+      public: '/image', //虚拟目录
+    },
   },
   mime: {
     image: ['png', 'jpg', 'gif', 'jpeg'],

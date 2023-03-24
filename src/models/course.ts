@@ -8,6 +8,8 @@ import {
 } from 'sequelize-typescript';
 import { User } from './users';
 import { getId } from '@/util/utils';
+import { UUID, UUIDV4 } from 'sequelize';
+import uploadConf from '@/config/upload.conf';
 export interface CourseType {
   courseId: string;
   courseName: string;
@@ -22,7 +24,7 @@ export interface CourseType {
   paranoid: true,
 })
 export class Course extends Model<Course> implements CourseType {
-  @Default(getId())
+  @Default(UUIDV4)
   @PrimaryKey
   @Column
   courseId: string;
@@ -31,10 +33,19 @@ export class Course extends Model<Course> implements CourseType {
   courseName: string;
 
   @Column
-  picture: string;
+  get picture(): string {
+    return this.getDataValue('picture')
+      ? process.env.HOST +
+          uploadConf().base['courseAvatarDir'].public +
+          '/' +
+          this.getDataValue('picture')
+      : null;
+  }
 
   @BelongsTo(() => User, { foreignKey: 'userId' })
   user: string;
+
+  userId: string;
   @Column
   comment: string;
 }
