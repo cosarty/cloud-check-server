@@ -16,19 +16,21 @@ export interface ClassScheduleType {
   classId?: string;
   courseId?: string;
   starDate: Date;
-  week: number; // 持续几周
+  endDate: Date; // 持续几周
   schooltime: string;
 }
 
 export class SchoolTime implements Record<keyof typeof WeekNum, string[]> {
-  'sunday' = [];
   'monday' = [];
   'tuesday' = [];
   'wednesday' = [];
   'thursday ' = [];
   'friday' = [];
   'saturday' = [];
+  'sunday' = [];
 }
+
+export type SchoolTimeType = Record<keyof typeof WeekNum, string[]>;
 
 @Table({ tableName: 'class_schedule', timestamps: true, paranoid: true })
 export class ClassSchedule
@@ -44,12 +46,13 @@ export class ClassSchedule
   class: string;
   @BelongsTo(() => Course, { foreignKey: 'courseId' })
   course: string;
-
+  classId: string;
+  courseId: string;
   @Column
   starDate: Date;
 
   @Column
-  week: number;
+  endDate: Date;
 
   @Column
   schooltime: string;

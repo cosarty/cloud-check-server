@@ -39,6 +39,8 @@ export class ClassController {
     private readonly classModel: PickModelType<ModelsEnum.Class>,
     @Inject(ModelsEnum.User)
     private readonly user: PickModelType<ModelsEnum.User>,
+    @Inject(ModelsEnum.ClassSchedule)
+    private readonly classSchedule: PickModelType<ModelsEnum.ClassSchedule>,
   ) {}
   @Post('create')
   @Super()
@@ -75,6 +77,11 @@ export class ClassController {
   @Super()
   @HttpCode(203)
   async deleteClass(@Param() payload: deleteClassDto) {
+    await this.classSchedule.destroy({
+      where: {
+        classId: payload.classId,
+      },
+    });
     await this.user.update(
       { classId: null },
       { where: { classId: payload.classId } },

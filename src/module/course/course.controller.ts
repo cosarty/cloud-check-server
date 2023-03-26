@@ -20,6 +20,8 @@ export class CourseController {
   constructor(
     @Inject(ModelsEnum.Course)
     private readonly course: PickModelType<ModelsEnum.Course>,
+    @Inject(ModelsEnum.ClassSchedule)
+    private readonly classSchedule: PickModelType<ModelsEnum.ClassSchedule>,
   ) {}
 
   // 创建课程
@@ -68,6 +70,11 @@ export class CourseController {
   @Post('delete/:courseId')
   @Auth()
   async delteCourse(@Param() pram: any) {
+    await this.classSchedule.destroy({
+      where: {
+        courseId: pram.courseId,
+      },
+    });
     await this.course.destroy({
       where: {
         courseId: pram.courseId,
