@@ -1,9 +1,13 @@
 import { WeekNum } from '@/constants/weekEnum';
 import { getId } from '@/util/utils';
+import { UUIDV4 } from 'sequelize';
 import {
+  AllowNull,
   BelongsTo,
+  BelongsToMany,
   Column,
   Default,
+  ForeignKey,
   Model,
   PrimaryKey,
   Table,
@@ -37,23 +41,31 @@ export class ClassSchedule
   extends Model<ClassSchedule>
   implements ClassScheduleType
 {
-  @Default(getId())
+  @Default(UUIDV4)
   @PrimaryKey
   @Column
   classScheduleId: string;
 
-  @BelongsTo(() => Class, { foreignKey: 'classId' })
-  class: string;
-  @BelongsTo(() => Course, { foreignKey: 'courseId' })
-  course: string;
+  // @BelongsTo(() => Class)
+  // class: string;
+  // @BelongsTo(() => Course)
+  // course: string;
+
+  @ForeignKey(() => Class)
+  @Column
   classId: string;
+
+  @ForeignKey(() => Course)
+  @Column
   courseId: string;
+
   @Column
   starDate: Date;
 
   @Column
   endDate: Date;
 
+  @AllowNull
   @Column
   schooltime: string;
 }

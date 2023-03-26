@@ -1,5 +1,6 @@
 import {
   BelongsTo,
+  BelongsToMany,
   Column,
   Default,
   Model,
@@ -10,6 +11,8 @@ import { User } from './users';
 import { getId } from '@/util/utils';
 import { UUID, UUIDV4 } from 'sequelize';
 import uploadConf from '@/config/upload.conf';
+import { Class } from './class';
+import { ClassSchedule } from './classSchedule';
 export interface CourseType {
   courseId: string;
   courseName: string;
@@ -46,6 +49,10 @@ export class Course extends Model<Course> implements CourseType {
   user: User;
 
   userId: string;
+
+  @BelongsToMany(() => Class, () => ClassSchedule)
+  course: Course;
+
   @Column
   comment: string;
 }

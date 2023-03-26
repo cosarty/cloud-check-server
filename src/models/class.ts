@@ -1,6 +1,7 @@
 import {
   AllowNull,
   BelongsTo,
+  BelongsToMany,
   Column,
   Default,
   DefaultScope,
@@ -13,6 +14,8 @@ import { User } from './users';
 import uploadConf from '@/config/upload.conf';
 import { Department } from './department';
 import { UUIDV4 } from 'sequelize';
+import { ClassSchedule } from './classSchedule';
+import { Course } from './course';
 
 export type ClassType = {
   className: string;
@@ -70,6 +73,9 @@ export class Class extends Model<Class> implements ClassType {
     foreignKey: 'departmentId',
   })
   department: string;
+
+  @BelongsToMany(() => Course, () => ClassSchedule)
+  course: Course;
 
   departmentId?: string;
 
