@@ -43,7 +43,7 @@ export class Course extends Model<Course> implements CourseType {
   }
 
   @BelongsTo(() => User, { foreignKey: 'userId' })
-  user: string;
+  user: User;
 
   userId: string;
   @Column
