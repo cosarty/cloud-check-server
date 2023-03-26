@@ -94,4 +94,12 @@ export class User extends Model<User> implements UserType {
           this.getDataValue('pic')
       : null;
   }
+
+  @BelongsTo(() => Department, {
+    targetKey: 'departmentId',
+    foreignKey: 'departmentId',
+  })
+  department: string;
+
+  departmentId?: string;
 }

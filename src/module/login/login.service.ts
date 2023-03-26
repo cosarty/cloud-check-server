@@ -44,6 +44,7 @@ export class LoginService {
             'password',
             'classId',
             'pic',
+            'departmentId',
           ],
         },
       );

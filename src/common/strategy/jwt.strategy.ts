@@ -39,6 +39,9 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
           association: 'class',
           attributes: ['classId', 'code', 'className', 'departmentId'],
         },
+        {
+          association: 'department',
+        },
       ],
     });
     if (!user) return false;

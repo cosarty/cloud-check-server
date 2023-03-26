@@ -14,12 +14,15 @@ import { SendMailDto } from './dto/sen-mail.dto';
 import { MyException } from '@/util/MyException';
 import { User } from '@/common/decorator/user.decorator';
 import { Cache } from 'cache-manager';
+import { ModelsEnum, PickModelType } from '@/models';
 
 @Controller('genIn')
 export class LoginController {
   constructor(
     private readonly loginService: LoginService,
     @Inject(CACHE_MANAGER) private readonly cache: Cache,
+    @Inject(ModelsEnum.User)
+    private readonly user: PickModelType<ModelsEnum.User>,
   ) {}
 
   // 注册接口
@@ -38,6 +41,12 @@ export class LoginController {
   @Post('login')
   async login(@Req() req: Request, @Body() payload: LoginDto) {
     return await this.loginService.login(payload);
+  }
+
+  @Post('restore')
+  async restore(@Body() { userId }: any) {
+    await this.user.restore({ where: { userId } });
+    return { message: '还原成功' };
   }
 
   // 邮件发送

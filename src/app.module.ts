@@ -1,7 +1,7 @@
+import { ClassScheduleModule } from './module/classSchedule/classschedule.module';
 import { CourseModule } from './module/course/course.module';
 import { TimeModule } from './module/time/time.module';
 import { DepartmentModule } from './module/department/department.module';
-
 import { DetecFaceModule } from './module/detecFace/detecface.module';
 import { UserModule } from './module/user/user.module';
 import { UploadModule } from './module/upload/upload.module';
@@ -22,6 +22,7 @@ import { MailerModule } from '@nest-modules/mailer';
 
 @Module({
   imports: [
+    ClassScheduleModule,
     CourseModule,
     TimeModule,
     DepartmentModule,

@@ -24,7 +24,7 @@ export class SchoolTime implements Record<keyof typeof WeekNum, string[]> {
   'monday' = [];
   'tuesday' = [];
   'wednesday' = [];
-  'thursday ' = [];
+  'thursday' = [];
   'friday' = [];
   'saturday' = [];
   'sunday' = [];

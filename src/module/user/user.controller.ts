@@ -145,12 +145,7 @@ export class UserController {
       },
 
       include: {
-        association: 'class',
-        include: [
-          {
-            association: 'department',
-          },
-        ],
+        association: 'department',
       },
       ...(pram.pageSize ? { limit: Number(pram.pageSize) ?? 0 } : {}),
       ...(pram.pageCount

@@ -59,12 +59,21 @@ export class DepartmentController {
   @Delete('del/:id')
   @Super()
   async del(@Param() { id }) {
+    console.log('id: ', id);
     await this.classModel.destroy({
       where: {
         departmentId: id,
       },
     });
-    await await this.department.destroy({
+    await this.user.update(
+      { departmentId: null },
+      {
+        where: {
+          departmentId: id,
+        },
+      },
+    );
+    await this.department.destroy({
       where: {
         departmentId: id,
       },
