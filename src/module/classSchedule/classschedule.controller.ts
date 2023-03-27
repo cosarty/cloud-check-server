@@ -14,6 +14,8 @@ export class ClassScheduleController {
     private readonly classSchedule: PickModelType<ModelsEnum.ClassSchedule>,
     @Inject(ModelsEnum.Class)
     private readonly classModle: PickModelType<ModelsEnum.Class>,
+    @Inject(ModelsEnum.Course)
+    private readonly course: PickModelType<ModelsEnum.Course>,
   ) {}
 
   @Post('create')
@@ -44,6 +46,30 @@ export class ClassScheduleController {
           },
           through: { attributes: [] },
         },
+        { association: 'teacher' },
+      ],
+    });
+
+    return data;
+  }
+
+  // 查询班级课程
+  @Get('getStudentClass')
+  @Auth()
+  async getStudentClass(@User() user) {
+    if (!user.classId) return [];
+    const data = this.course.findAll({
+      include: [
+        {
+          required: true,
+          association: 'class',
+          where: {
+            classId: user.classId,
+          },
+          attributes: [],
+          through: { attributes: [] },
+        },
+        { association: 'user' },
       ],
     });
 

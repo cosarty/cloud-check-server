@@ -51,7 +51,7 @@ export class Course extends Model<Course> implements CourseType {
   userId: string;
 
   @BelongsToMany(() => Class, () => ClassSchedule)
-  course: Course;
+  class: Class;
 
   @Column
   comment: string;
