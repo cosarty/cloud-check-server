@@ -65,19 +65,28 @@ const statInfo = {
 
 // 签到任务
 const singTask = {
-  courseId: String,
+  classScheduleId: String,
   taskName: String,
   taskTime: Date,
   location: String, // 位置
   areaId: String, //位置id,
   singTime: Date, // 签到时间
-  outTime: Date, // 签退时间
   sustain: Number, // 持续时间
   userId: String,
   integral: Number, // 签到分数
-  assign: String, //  指派人
+};
+
+// 定时任务
+const timing = {
+  taskName: String,
+  classScheduleId: String,
+  timingId: String,
+  location: String, // 位置
+  areaId: String, //位置id,
+  sustain: Number, // 持续时间
   period: String, // 周期  月m 日d 周w  定时任务周期
   isPeriod: Boolean, // 是否开启定时任务
+  integral: Number, // 签到分数
 };
 
 // 课程人员表  多对多  多主键

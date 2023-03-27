@@ -9,6 +9,7 @@ import { SingTask } from './singTask';
 import { CoursePerson } from './coursePerson';
 import { Area } from './area';
 import { Time } from './time';
+import { TimingTask } from './timing';
 enum ModelsEnum {
   User = 'User',
   AuthCode = 'AuthCode',
@@ -21,6 +22,7 @@ enum ModelsEnum {
   CoursePerson = 'CoursePerson',
   Area = 'Area',
   Time = 'Time',
+  TimingTask = 'TimingTask',
 }
 
 const Models = {
@@ -35,6 +37,7 @@ const Models = {
   CoursePerson,
   Area,
   Time,
+  TimingTask,
 };
 
 export type ModelsType = typeof Models;

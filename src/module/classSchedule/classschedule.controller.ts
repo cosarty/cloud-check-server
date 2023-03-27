@@ -44,7 +44,6 @@ export class ClassScheduleController {
           where: {
             userId: user.userId,
           },
-          through: { attributes: [] },
         },
         { association: 'teacher' },
       ],
@@ -66,8 +65,6 @@ export class ClassScheduleController {
           where: {
             classId: user.classId,
           },
-          attributes: [],
-          through: { attributes: [] },
         },
         { association: 'user' },
       ],
