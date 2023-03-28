@@ -2,8 +2,11 @@
 https://docs.nestjs.com/controllers#controllers
 */
 
+import { User } from '@/common/decorator/user.decorator';
+import { Auth } from '@/common/role/auth.decorator';
 import { ModelsEnum, PickModelType } from '@/models';
 import { Body, Controller, Delete, Inject, Param, Post } from '@nestjs/common';
+import { nanoid } from 'nanoid';
 
 @Controller('classHourse')
 export class ClassHoursController {
@@ -16,11 +19,24 @@ export class ClassHoursController {
 
   // 创建时间
   @Post('create')
-  async create(@Body() pram: any) {
+  @Auth()
+  async create(@Body() pram: any, @User() user) {
     const data = await this.classHourse.create(pram, {
       fields: ['classScheduleId', 'timeId', 'weekDay'],
     });
     // 设置定时任务
+    // nanoid()
+    await this.timing.create(
+      {
+        ...pram,
+        scheduleName: nanoid(),
+        taskName: pram.weekDay + '课程自动轮询',
+        userId: user.userId,
+      },
+      {
+        fields: ['classScheduleId', 'taskName', 'scheduleName', 'userId'],
+      },
+    );
     return { message: '设置成功', data };
   }
 

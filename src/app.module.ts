@@ -1,3 +1,4 @@
+import { ScheduleModule } from './module/schedule/schedule.module';
 import { ClassHoursModule } from './module/classHours/classhours.module';
 import { ClassScheduleModule } from './module/classSchedule/classschedule.module';
 import { CourseModule } from './module/course/course.module';
@@ -20,9 +21,12 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { ResponseInterceptor } from './common/interceptor/response.interceptor';
 import { MailerModule } from '@nest-modules/mailer';
+import { ScheduleModule as RootScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    RootScheduleModule.forRoot(),
+    ScheduleModule,
     ClassHoursModule,
     ClassScheduleModule,
     CourseModule,

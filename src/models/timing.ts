@@ -32,6 +32,7 @@ export class TimingTask extends Model<TimingTask> implements TimingType {
   timingId: string;
   @BelongsTo(() => ClassSchedule, { foreignKey: 'classScheduleId' })
   classSchedule: ClassSchedule;
+  classScheduleId: string;
   @Column
   taskName: string;
   @Column
@@ -42,6 +43,7 @@ export class TimingTask extends Model<TimingTask> implements TimingType {
   sustain: number;
   @BelongsTo(() => User, { foreignKey: 'userId' })
   user: User;
+  userId: string;
   @Column
   integral: number;
 
