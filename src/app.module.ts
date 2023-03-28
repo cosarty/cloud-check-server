@@ -1,3 +1,4 @@
+import { ClassHoursModule } from './module/classHours/classhours.module';
 import { ClassScheduleModule } from './module/classSchedule/classschedule.module';
 import { CourseModule } from './module/course/course.module';
 import { TimeModule } from './module/time/time.module';
@@ -22,6 +23,7 @@ import { MailerModule } from '@nest-modules/mailer';
 
 @Module({
   imports: [
+    ClassHoursModule,
     ClassScheduleModule,
     CourseModule,
     TimeModule,

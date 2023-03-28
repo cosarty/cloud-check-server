@@ -5,7 +5,7 @@ https://docs.nestjs.com/controllers#controllers
 import { User } from '@/common/decorator/user.decorator';
 import { Auth } from '@/common/role/auth.decorator';
 import { ModelsEnum, PickModelType } from '@/models';
-import { Body, Controller, Get, Inject, Post } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, Post } from '@nestjs/common';
 
 @Controller('classSchedule')
 export class ClassScheduleController {
@@ -71,5 +71,14 @@ export class ClassScheduleController {
     });
 
     return data;
+  }
+
+  // 查看某个课程的上课情况
+  @Get('checkCourse/:id')
+  async checkCourse(@Param() pram: any) {
+    return await this.classSchedule.findOne({
+      where: { classScheduleId: pram.id },
+      include: [{ association: 'classHours', include: ['time', 'timing'] }],
+    });
   }
 }

@@ -83,4 +83,13 @@ export class CourseController {
 
     return { message: '删除成功' };
   }
+
+  @Get('getInfo/:id')
+  @Auth()
+  async getInfo(@Param() pram: any) {
+    return await this.course.findOne({
+      where: { courseId: pram.id },
+      include: 'user',
+    });
+  }
 }

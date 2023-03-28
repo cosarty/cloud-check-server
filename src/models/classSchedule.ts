@@ -8,11 +8,13 @@ import {
   Column,
   Default,
   ForeignKey,
+  HasMany,
   Model,
   PrimaryKey,
   Table,
 } from 'sequelize-typescript';
 import { Class } from './class';
+import { ClassHours } from './classHours';
 import { Course } from './course';
 
 export interface ClassScheduleType {
@@ -21,20 +23,20 @@ export interface ClassScheduleType {
   courseId?: string;
   starDate: Date;
   endDate: Date; // 持续几周
-  schooltime: string;
+  schooltime?: string;
 }
 
-export class SchoolTime implements Record<keyof typeof WeekNum, string[]> {
-  'monday' = [];
-  'tuesday' = [];
-  'wednesday' = [];
-  'thursday' = [];
-  'friday' = [];
-  'saturday' = [];
-  'sunday' = [];
-}
+// export class SchoolTime implements Record<keyof typeof WeekNum, string[]> {
+//   'monday' = [];
+//   'tuesday' = [];
+//   'wednesday' = [];
+//   'thursday' = [];
+//   'friday' = [];
+//   'saturday' = [];
+//   'sunday' = [];
+// }
 
-export type SchoolTimeType = Record<keyof typeof WeekNum, string[]>;
+// export type SchoolTimeType = Record<keyof typeof WeekNum, string[]>;
 
 @Table({ tableName: 'class_schedule', timestamps: true, paranoid: true })
 export class ClassSchedule
@@ -65,7 +67,12 @@ export class ClassSchedule
   @Column
   endDate: Date;
 
+  // 课程是否结束
+  @Default(false)
   @AllowNull
   @Column
-  schooltime: string;
+  isEnd: boolean;
+
+  @HasMany(() => ClassHours)
+  classHours: ClassHours;
 }
