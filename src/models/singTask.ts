@@ -48,4 +48,6 @@ export class SingTask extends Model<SingTask> implements SingTaskType {
   user: User;
   @Column
   integral: number;
+  @Column
+  scheduleName: string; //定时任务名字
 }

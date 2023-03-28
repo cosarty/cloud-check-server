@@ -27,7 +27,7 @@ export interface ClassHoursType {
 /**
  * 删除 课程的时候
  * 删除 某个上课时间
- * 删除 删除classSchdule的时候
+ * 删除 删除classSchdule的时候 - 完成
  * 删除 timing 的时候
  *
  * 以上情况都要删除

@@ -21,7 +21,6 @@ export interface TimingType {
   userId?: string;
   integral: number; // 签到分数
   period: string; // 周期  月m 日d 周w  定时任务周期
-  isPeriod: boolean; // 是否开启定时任务
 }
 
 // 签到任务
@@ -48,6 +47,7 @@ export class TimingTask extends Model<TimingTask> implements TimingType {
 
   @Column
   period: string;
+
   @Column
-  isPeriod: boolean;
+  scheduleName: string; //定时任务名字
 }

@@ -22,6 +22,8 @@ export class CourseController {
     private readonly course: PickModelType<ModelsEnum.Course>,
     @Inject(ModelsEnum.ClassSchedule)
     private readonly classSchedule: PickModelType<ModelsEnum.ClassSchedule>,
+    @Inject(ModelsEnum.ClassHours)
+    private readonly classHours: PickModelType<ModelsEnum.ClassHours>,
   ) {}
 
   // 创建课程
@@ -70,11 +72,22 @@ export class CourseController {
   @Post('delete/:courseId')
   @Auth()
   async delteCourse(@Param() pram: any) {
+    const chedule = await this.classSchedule.findOne({
+      where: {
+        courseId: pram.courseId,
+      },
+    });
     await this.classSchedule.destroy({
       where: {
         courseId: pram.courseId,
       },
     });
+    if (chedule) {
+      await this.classHours.destroy({
+        where: { classScheduleId: chedule.classScheduleId },
+      });
+    }
+
     await this.course.destroy({
       where: {
         courseId: pram.courseId,

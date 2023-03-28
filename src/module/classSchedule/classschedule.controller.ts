@@ -81,4 +81,13 @@ export class ClassScheduleController {
       include: [{ association: 'classHours', include: ['time', 'timing'] }],
     });
   }
+
+  // 查看某个班级的所有课程情况
+  @Get('checkClassCourse/:id')
+  async checkClassCourse(@Param() pram: any) {
+    return await this.classSchedule.findAll({
+      where: { classId: pram.id },
+      include: [{ association: 'classHours', include: ['time', 'timing'] }],
+    });
+  }
 }
