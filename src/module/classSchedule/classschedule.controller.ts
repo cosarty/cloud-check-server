@@ -87,7 +87,10 @@ export class ClassScheduleController {
   async checkClassCourse(@Param() pram: any) {
     return await this.classSchedule.findAll({
       where: { classId: pram.id },
-      include: [{ association: 'classHours', include: ['time', 'timing'] }],
+      include: [
+        { association: 'classHours', include: ['time', 'timing'] },
+        { association: 'course', include: ['user'] },
+      ],
     });
   }
 }

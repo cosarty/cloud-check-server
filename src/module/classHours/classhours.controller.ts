@@ -20,6 +20,7 @@ export class ClassHoursController {
     const data = await this.classHourse.create(pram, {
       fields: ['classScheduleId', 'timeId', 'weekDay'],
     });
+    // 设置定时任务
     return { message: '设置成功', data };
   }
 
@@ -28,12 +29,12 @@ export class ClassHoursController {
     const data = await this.classHourse.findOne({
       where: { classHoursId: param.id },
     });
-    // 删除定时任务
+
     if (data) {
       await this.timing.destroy({ where: { timingId: data.timingId } });
       data.destroy();
     }
-    // 删除定时任务名字
+    // 删除定时任务
     return { message: '删除成功' };
   }
 }

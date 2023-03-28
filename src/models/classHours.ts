@@ -21,7 +21,7 @@ export interface ClassHoursType {
   timeId?: number; // 上课的节数
   timingId?: string; // 轮询id
   classScheduleId?: string; // 课程id
-  weekDay?: SchoolTimeType; //星期几
+  weekDay?: string; //星期几
 }
 
 /**
@@ -60,5 +60,6 @@ export class ClassHours
 
   timingId?: string; // 轮询id
 
-  weekDay?: SchoolTimeType; //星期
+  @Column
+  weekDay?: string;
 }

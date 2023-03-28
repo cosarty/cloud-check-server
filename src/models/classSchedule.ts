@@ -75,4 +75,7 @@ export class ClassSchedule
 
   @HasMany(() => ClassHours)
   classHours: ClassHours;
+
+  @BelongsTo(() => Course, { foreignKey: 'courseId' })
+  course: string;
 }
