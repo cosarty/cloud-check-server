@@ -25,11 +25,11 @@ export class ClassHoursController {
       fields: ['classScheduleId', 'timeId', 'weekDay'],
     });
     // 设置定时任务
-    // nanoid()
+    const scheduleName = nanoid();
     await this.timing.create(
       {
         ...pram,
-        scheduleName: nanoid(),
+        scheduleName: scheduleName,
         taskName: pram.weekDay + '课程自动轮询',
         userId: user.userId,
       },

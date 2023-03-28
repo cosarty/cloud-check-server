@@ -9,5 +9,6 @@ import { Module } from '@nestjs/common';
   imports: [],
   controllers: [],
   providers: [ScheduleService],
+  exports: [ScheduleService],
 })
 export class ScheduleModule {}

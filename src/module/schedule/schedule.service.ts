@@ -12,8 +12,10 @@ export class ScheduleService {
     private readonly singTask: PickModelType<ModelsEnum.SingTask>,
   ) {}
 
-  @Timeout(3000)
+  @Timeout(1000)
   handleCron() {
     this.logger.debug('项目启动:开始轮询定时任务');
+    //  轮询 timing表 然后查询  isPeriod===true && classSchedule.starDate  classSchedule.endDate && classSchedule.isEnd
+    // 如果过期了就设置过期
   }
 }

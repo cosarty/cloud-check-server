@@ -48,8 +48,16 @@ export class TimingTask extends Model<TimingTask> implements TimingType {
   integral: number;
 
   @Column
-  period: string;
+  period: string; // 时间段默认是上课时间   2022年6月21号-2022年8月31号
+
+  @Default(true)
+  @Column
+  isPeriod: boolean; // 是否开启轮询
 
   @Column
   scheduleName: string; //定时任务名字
+
+  @Default(false)
+  @Column
+  isEnd: boolean;
 }
