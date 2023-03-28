@@ -10,6 +10,7 @@ import {
 import { User } from '@/models/users';
 import { ClassSchedule } from './classSchedule';
 import { UUIDV4 } from 'sequelize';
+import { TimingTask } from './timing';
 
 export interface SingTaskType {
   singTaskId: string;
@@ -50,4 +51,17 @@ export class SingTask extends Model<SingTask> implements SingTaskType {
   integral: number;
   @Column
   scheduleName: string; //定时任务名字
+
+  @Column
+  period: string; // 时间规则
+
+  // 轮询id 用来判断这次的签到是单次的还是轮询推送的
+  @BelongsTo(() => TimingTask, { foreignKey: 'timingId' })
+  timing;
+
+  @Default(false)
+  @Column
+  isEnd: boolean;
+
+  timingId: string;
 }

@@ -44,8 +44,11 @@ export class TimingTask extends Model<TimingTask> implements TimingType {
   @BelongsTo(() => User, { foreignKey: 'userId' })
   user: User;
   userId: string;
+  @Default(60)
   @Column
-  integral: number;
+  get integral(): number {
+    return this.getDataValue('integral') ?? 60;
+  }
 
   @Column
   period: string; // 时间段默认是上课时间   2022年6月21号-2022年8月31号
