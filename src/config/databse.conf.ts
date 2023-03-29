@@ -7,4 +7,8 @@ export default registerAs('database', () => ({
   username: 'root',
   password: '123456',
   database: 'dianming',
+  pool: {
+    max: 5,
+    min: 0,
+  },
 }));

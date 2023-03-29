@@ -3,6 +3,7 @@ import { ModelsEnum, PickModelType } from '@/models';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Cron, SchedulerRegistry, Timeout } from '@nestjs/schedule';
 import { CronJob } from 'cron';
+import dayjs from 'dayjs';
 import { nanoid } from 'nanoid';
 import { Op } from 'sequelize';
 @Injectable()
@@ -88,15 +89,16 @@ export class ScheduleService {
         where: { scheduleName: name, isEnd: { [Op.not]: true } },
       });
 
-      if (
-        new Date(ch.classSchedule.starDate).getTime() < new Date().getTime()
-      ) {
+      // 判断当前轮询时间
+      // 当前时间是不是上课时间
+      if (dayjs().isSame(dayjs(ch.classSchedule.starDate))) {
         const {
           integral,
           timingId,
           classSchedule: {
             course: { courseName },
           },
+          classScheduleId,
         } = ch;
         const scheduleName = nanoid();
         //  创建一条签到信息
@@ -106,9 +108,10 @@ export class ScheduleService {
           taskName: courseName + '(签到)',
           scheduleName,
           taskTime: new Date(),
+          classScheduleId,
         });
         // 创建任务 开启签到
-        await this.addTimeout(scheduleName, 5000);
+        await this.addTimeout(scheduleName, integral);
       }
       // 轮询到了就插入一条签到信息数据
       this.logger.warn(`工作中`);
@@ -120,7 +123,9 @@ export class ScheduleService {
 
   // 设置定时
   async addTimeout(name: string, seconds: number) {
+    this.logger.debug(`开启任务 ${name}`);
     const callback = async () => {
+      this.logger.warn(`任务结束 ${name}`);
       // 关闭签到
       await this.singTask.update(
         { isEnd: true },
@@ -128,7 +133,7 @@ export class ScheduleService {
       );
     };
 
-    const timeout = setTimeout(callback, seconds);
+    const timeout = setTimeout(callback, seconds * 1000);
     this.schedulerRegistry.addTimeout(name, timeout);
   }
 

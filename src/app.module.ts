@@ -1,3 +1,4 @@
+import { SingTaskModule } from './module/singTask/singtask.module';
 import { TimingModule } from './module/timing/timing.module';
 import { ScheduleModule } from './module/schedule/schedule.module';
 import { ClassHoursModule } from './module/classHours/classhours.module';
@@ -26,6 +27,7 @@ import { ScheduleModule as RootScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    SingTaskModule,
     TimingModule,
     RootScheduleModule.forRoot(),
     ScheduleModule,

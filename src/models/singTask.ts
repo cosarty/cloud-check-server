@@ -11,6 +11,8 @@ import { User } from '@/models/users';
 import { ClassSchedule } from './classSchedule';
 import { UUIDV4 } from 'sequelize';
 import { TimingTask } from './timing';
+import { Class } from './class';
+import { Department } from './department';
 
 export interface SingTaskType {
   singTaskId: string;
@@ -23,6 +25,7 @@ export interface SingTaskType {
   userId?: string;
   integral: number; // 签到分数
 }
+// 签到任务可以分为  班级 课程 和系别
 
 // 签到任务
 @Table({ tableName: 'sing_task', timestamps: true, paranoid: true })
@@ -33,6 +36,8 @@ export class SingTask extends Model<SingTask> implements SingTaskType {
   singTaskId: string;
   @BelongsTo(() => ClassSchedule, { foreignKey: 'classScheduleId' })
   classSchedule: ClassSchedule;
+
+  classScheduleId: string;
   @Column
   taskName: string;
   @Column
@@ -57,11 +62,20 @@ export class SingTask extends Model<SingTask> implements SingTaskType {
 
   // 轮询id 用来判断这次的签到是单次的还是轮询推送的
   @BelongsTo(() => TimingTask, { foreignKey: 'timingId' })
-  timing;
+  timing: TimingTask;
 
   @Default(false)
   @Column
   isEnd: boolean;
 
   timingId: string;
+
+  @BelongsTo(() => Class, { foreignKey: 'classId' })
+  classInfo: Class;
+  classId: string;
+
+  @BelongsTo(() => Department, { foreignKey: 'departmentId' })
+  department: Department;
+
+  departmentId: string;
 }
