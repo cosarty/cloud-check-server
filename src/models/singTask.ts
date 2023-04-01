@@ -45,6 +45,8 @@ export class SingTask extends Model<SingTask> implements SingTaskType {
   @Column
   location: string;
   @Column
+  locationName: string;
+  @Column
   areaId: string;
   @Column
   singTime: Date;

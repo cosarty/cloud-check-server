@@ -14,6 +14,7 @@ export interface AreaType {
   areaName: string;
   location: string;
   userId?: string;
+  locationName?: string;
 }
 @Table({ tableName: 'area', timestamps: true, paranoid: true })
 export class Area extends Model<Area> implements AreaType {
@@ -25,6 +26,8 @@ export class Area extends Model<Area> implements AreaType {
   areaName: string;
   @Column
   location: string;
+  @Column
+  locationName: string;
   @BelongsTo(() => User, { foreignKey: 'userId' })
   user?: string;
 }

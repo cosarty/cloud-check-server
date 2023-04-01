@@ -38,6 +38,8 @@ export class TimingTask extends Model<TimingTask> implements TimingType {
   @Column
   location: string;
   @Column
+  locationName: string;
+  @Column
   areaId: string;
   @Column
   sustain: number;
