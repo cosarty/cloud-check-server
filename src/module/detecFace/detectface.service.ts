@@ -109,6 +109,7 @@ export class DetectFaceService {
       requestBody.dbName = dbName;
       requestBody.imageUrlObject = Readable.from(buf);
       requestBody.limit = limit;
+      requestBody.maxFaceNum = 1;
       let runtime = new TeaUtil.RuntimeOptions({});
       return await this.client.searchFaceAdvance(requestBody, runtime);
     } catch (err) {

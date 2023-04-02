@@ -41,6 +41,13 @@ export function Upload(
         storage: diskStorage({
           //文件储存位置
           destination: (req, file, callback) => {
+            // 正式环境
+            // const accessPath = join(
+            //   process.cwd(),
+            //   'dist',
+            //   uploadConf().root,
+            //   dir,
+            // );
             const accessPath = join(
               process.cwd(),
               'src',

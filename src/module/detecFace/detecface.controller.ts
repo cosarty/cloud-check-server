@@ -32,21 +32,17 @@ export class DetecFaceController {
 
     if (isfaceSuccsess) {
       const res = await this.detecfaceServe.searchFace(detect.imageData);
-      console.log('res[0]: ', res[0]);
+      const item = res.body?.data?.matchList?.[0]?.faceItems?.[0];
 
       if (
-        res.body?.data?.matchList?.[0]?.faceItems?.[0]?.entityId?.replace(
-          /_/g,
-          '-',
-        ) &&
-        user.userId
+        item &&
+        item.confidence > 60 &&
+        item?.entityId?.replace(/_/g, '-') !== user.userId
       ) {
         msg = '您已录入请不要代替同学录入';
         isfaceSuccsess = false;
       }
     }
-    console.log('msg: ', msg);
-
     return {
       isfaceSuccsess,
       msg,
@@ -79,5 +75,36 @@ export class DetecFaceController {
   async searchFaceEntity(@Param() param: any) {
     const data = await this.detecfaceServe.searchFaceEntity(param.id);
     return data.body.data;
+  }
+
+  //比对人脸
+  @Post('compareFace')
+  @Auth()
+  async compare(@Body() detect: DetectFaceDto, @User() user) {
+    const detectLivingFaceResponse = await this.detecfaceServe.detectFaceClent(
+      detect,
+    );
+
+    let msg: string;
+    const elements = detectLivingFaceResponse.body.data.elements;
+    let isSuccsess = elements[0].results[0].suggestion === 'pass';
+
+    if (isSuccsess) {
+      const res = await this.detecfaceServe.searchFace(detect.imageData);
+      const item = res.body?.data?.matchList?.[0]?.faceItems?.[0];
+
+      if (
+        item &&
+        item.confidence > 60 &&
+        item?.entityId?.replace(/_/g, '-') !== user.userId
+      ) {
+        msg = '请不要代签';
+        isSuccsess = false;
+      }
+    }
+    return {
+      isSuccsess,
+      msg,
+    };
   }
 }
