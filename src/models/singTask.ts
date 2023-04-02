@@ -24,6 +24,7 @@ export interface SingTaskType {
   sustain: number; // 持续时间
   userId?: string;
   integral: number; // 签到分数
+  distance: number; // 签到距离
 }
 // 签到任务可以分为  班级 课程 和系别
 
@@ -75,6 +76,9 @@ export class SingTask extends Model<SingTask> implements SingTaskType {
   @BelongsTo(() => Class, { foreignKey: 'classId' })
   classInfo: Class;
   classId: string;
+
+  @Column
+  distance: number;
 
   @BelongsTo(() => Department, { foreignKey: 'departmentId' })
   department: Department;

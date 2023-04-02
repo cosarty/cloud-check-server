@@ -102,4 +102,8 @@ export class User extends Model<User> implements UserType {
   department: string;
 
   departmentId?: string;
+
+  @AllowNull
+  @Column
+  face: boolean; // 是否录入人脸
 }

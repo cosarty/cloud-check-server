@@ -8,6 +8,7 @@ import {
   Table,
 } from 'sequelize-typescript';
 import { User } from '@/models/users';
+import { UUIDV4 } from 'sequelize';
 
 export interface AreaType {
   areaId: string;
@@ -18,7 +19,7 @@ export interface AreaType {
 }
 @Table({ tableName: 'area', timestamps: true, paranoid: true })
 export class Area extends Model<Area> implements AreaType {
-  @Default(getId())
+  @Default(UUIDV4)
   @PrimaryKey
   @Column
   areaId: string;
@@ -30,4 +31,5 @@ export class Area extends Model<Area> implements AreaType {
   locationName: string;
   @BelongsTo(() => User, { foreignKey: 'userId' })
   user?: string;
+  userId: string;
 }

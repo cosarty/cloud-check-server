@@ -5,7 +5,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Injectable } from '@nestjs/common';
 import { DetectFaceDto } from './dto/face.dto';
-
+import { Readable } from 'stream';
 @Injectable()
 export class DetectFaceService {
   private get client() {
@@ -20,6 +20,7 @@ export class DetectFaceService {
     return new FacebodyClient.default(config);
   }
 
+  // 检测人脸
   async detectFaceClent(detect: DetectFaceDto) {
     let tasks0 = new FacebodyClient.DetectLivingFaceRequestTasks({
       ...detect,
@@ -33,10 +34,94 @@ export class DetectFaceService {
       runtime,
     );
   }
+
+  // 创建人脸数据库
+  async createFaceDb(dbName: string): Promise<void> {
+    try {
+      let requestBody = new FacebodyClient.CreateFaceDbRequest({
+        name: dbName,
+      });
+      await this.client.createFaceDb(requestBody);
+      console.log('--------------------创建人脸数据库成功--------------------');
+    } catch (err) {
+      console.log('create facebody db error');
+      console.log(err.message);
+    }
+  }
+
+  // 创建人脸样本
+  async addFaceEntity(entityId: string): Promise<void> {
+    try {
+      const en = await this.searchFaceEntity(entityId);
+      if (en.body.data) return;
+      let requestBody = new FacebodyClient.AddFaceEntityRequest({});
+      requestBody.dbName = 'cloud_check';
+      requestBody.entityId = entityId.replace(/-/g, '_');
+      await this.client.addFaceEntity(requestBody);
+      console.log('--------------------创建人脸样本成功--------------------');
+    } catch (err) {
+      console.log('add face entity error.');
+      console.log(err.message);
+    }
+  }
+
+  // 录入人脸
+  async entryFace(entityId: string, ImageUrl: any): Promise<void> {
+    try {
+      let requestBody = new FacebodyClient.AddFaceAdvanceRequest({});
+      requestBody.dbName = 'cloud_check';
+      requestBody.entityId = entityId.replace(/-/g, '_');
+      requestBody.imageUrlObject = Readable.from(ImageUrl);
+      let runtime = new TeaUtil.RuntimeOptions({});
+      await this.client.addFaceAdvance(requestBody, runtime);
+      console.log('--------------------录入人脸样本成功--------------------');
+    } catch (err) {
+      console.log('add face entity error.');
+      console.log(err.message);
+    }
+  }
+  // 获取人脸样本
+  async searchFaceEntity(
+    entityId: string,
+  ): Promise<FacebodyClient.GetFaceEntityResponse> {
+    try {
+      let requestBody = new FacebodyClient.GetFaceEntityRequest({});
+      requestBody.dbName = 'cloud_check';
+      requestBody.entityId = entityId.replace(/-/g, '_');
+      console.log('entit ', entityId.replace('-', '_'));
+      console.log('--------------------获取人脸样本成功--------------------');
+      return await this.client.getFaceEntity(requestBody);
+    } catch (err) {
+      console.log('get face entity error.');
+      console.log(err.message);
+    }
+  }
+
+  // 搜索人脸
+  async searchFace(
+    imageUrl: string,
+    dbName: string = 'cloud_check',
+    limit: number = 1,
+  ): Promise<FacebodyClient.SearchFaceResponse> {
+    try {
+      const buf = Buffer.from(imageUrl, 'base64');
+      let requestBody = new FacebodyClient.SearchFaceAdvanceRequest({});
+      requestBody.dbName = dbName;
+      requestBody.imageUrlObject = Readable.from(buf);
+      requestBody.limit = limit;
+      let runtime = new TeaUtil.RuntimeOptions({});
+      return await this.client.searchFaceAdvance(requestBody, runtime);
+    } catch (err) {
+      console.log('search face error.');
+      console.log(err.message);
+    }
+    return null;
+  }
+
   async compareFace(detect: DetectFaceDto) {
     try {
       const fileStreamB = fs.createReadStream(
-        path.join(process.cwd(),'dist', 'static', 'test.jpg'),
+        path.join(process.cwd(), 'dist', 'static', 'test.jpg'),
       );
 
       const compareFaceAdvanceRequest =
