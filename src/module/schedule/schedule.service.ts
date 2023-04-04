@@ -160,7 +160,12 @@ export class ScheduleService {
     const starD = new Date(schedule.starDate).getDate();
     const mut = time.startTime.split(':')[1];
     cornTab = cornTab
-      .replace('w', Object.keys(WeekNum).indexOf(weekDay) + 1 + '')
+      .replace(
+        'w',
+        (Object.keys(WeekNum).indexOf(weekDay) + 1 === 7
+          ? 0
+          : Object.keys(WeekNum).indexOf(weekDay) + 1) + '',
+      )
       .replace('M', starM === endM ? starM + '' : `${starM}-${endM}`)
       .replace('y', `2023`)
       .replace('h', `${time.startTime.split(':')[0]}`)

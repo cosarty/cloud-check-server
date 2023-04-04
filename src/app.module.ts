@@ -1,3 +1,4 @@
+import { StatInfoModule } from './module/statInfo/statinfo.module';
 import { AreaModule } from './module/area/area.module';
 import { SingTaskModule } from './module/singTask/singtask.module';
 import { TimingModule } from './module/timing/timing.module';
@@ -28,6 +29,7 @@ import { ScheduleModule as RootScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    StatInfoModule,
     AreaModule,
     SingTaskModule,
     TimingModule,
