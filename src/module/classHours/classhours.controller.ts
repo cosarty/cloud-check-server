@@ -29,7 +29,7 @@ export class ClassHoursController {
 
     const isFace = pram.isFace ?? false;
     const isPeriod = pram.isPeriod ?? false;
-    const sustain = pram.isPeriod ?? 1;
+    const sustain = pram.sustain ?? 1;
     let timing;
 
     // 设置定时任务
@@ -120,7 +120,7 @@ export class ClassHoursController {
       const timing = await hours.getTiming();
       //  更新 定时数据
       await this.timing.update(
-        { isFace, integral: integral * 60, isPeriod },
+        { isFace, integral: integral * 60, isPeriod, sustain },
         { where: { timingId: hours.timingId, userId: user.userId } },
       );
 

@@ -35,4 +35,12 @@ export class StatInfo extends Model<StatInfo> implements StatInfoType {
   tagetScope: number;
   @Column
   signOutTime: Date;
+  @Column
+  sustain: number; // 分数
+
+  @Column
+  location: string; // 签到的经纬度
+
+  @Column
+  locationName: string; // 签到地点的名字
 }

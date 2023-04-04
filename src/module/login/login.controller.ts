@@ -40,7 +40,6 @@ export class LoginController {
 
   @Post('login')
   async login(@Req() req: Request, @Body() payload: LoginDto) {
-    console.log('payload: ', payload);
     return await this.loginService.login(payload);
   }
 

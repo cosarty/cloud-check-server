@@ -15,7 +15,6 @@ export interface CoursePersonType {
   userId?: string;
   classScheduleId?: string;
   count: number; // 签到次数
-  integral: string; // 分数
 }
 
 @Table({ tableName: 'course_person', timestamps: true, paranoid: true })
@@ -35,5 +34,5 @@ export class CoursePerson
   @Column
   count: number;
   @Column
-  integral: string;
+  sustain: number; // 分数
 }
