@@ -84,4 +84,8 @@ export class SingTask extends Model<SingTask> implements SingTaskType {
   department: Department;
 
   departmentId: string;
+
+  @Default(false)
+  @Column
+  isFace: boolean; // 是否开启人脸
 }

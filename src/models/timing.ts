@@ -22,6 +22,7 @@ export interface TimingType {
   integral: number; // 签到分数
   period: string; // 周期  月m 日d 周w  定时任务周期
   distance: number; // 签到距离
+  isFace: boolean; // 是否开启人脸
 }
 
 // 签到任务
@@ -69,4 +70,8 @@ export class TimingTask extends Model<TimingTask> implements TimingType {
   @Default(false)
   @Column
   isEnd: boolean;
+
+  @Default(false)
+  @Column
+  isFace: boolean;
 }

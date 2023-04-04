@@ -8,6 +8,7 @@ import * as session from 'express-session';
 import { ValidatePipe } from './common/pipe/validate.pipe';
 import { join } from 'path';
 import uploadConf, { UploadConfType } from '@/config/upload.conf';
+
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors();

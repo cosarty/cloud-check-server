@@ -3,9 +3,14 @@ import { ModelsEnum, PickModelType } from '@/models';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Cron, SchedulerRegistry, Timeout } from '@nestjs/schedule';
 import { CronJob } from 'cron';
-import dayjs from 'dayjs';
 import { nanoid } from 'nanoid';
 import { Op } from 'sequelize';
+import * as dayjs from 'dayjs';
+import * as isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import * as isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+dayjs.extend(isSameOrBefore);
+dayjs.extend(isSameOrAfter);
+
 @Injectable()
 export class ScheduleService {
   private readonly logger = new Logger(ScheduleService.name);
@@ -38,7 +43,6 @@ export class ScheduleService {
         isEnd: { [Op.not]: true },
       },
     });
-
     await Promise.all(
       w.map(async (a) => {
         await this.classHors.destroy({
@@ -91,10 +95,15 @@ export class ScheduleService {
 
       // 判断当前轮询时间
       // 当前时间是不是上课时间
-      if (dayjs().isSame(dayjs(ch.classSchedule.starDate))) {
+      if (
+        dayjs().isSameOrAfter(dayjs(ch.classSchedule.starDate)) &&
+        dayjs().isSameOrBefore(dayjs(ch.classSchedule.endDate)) &&
+        ch.isPeriod
+      ) {
         const {
-          integral,
+          integral = 60,
           timingId,
+          isFace,
           classSchedule: {
             course: { courseName },
           },
@@ -109,12 +118,13 @@ export class ScheduleService {
           scheduleName,
           taskTime: new Date(),
           classScheduleId,
+          isFace,
         });
         // 创建任务 开启签到
         await this.addTimeout(scheduleName, integral);
+        // 轮询到了就插入一条签到信息数据
+        this.logger.warn(`工作中 ${scheduleName}`);
       }
-      // 轮询到了就插入一条签到信息数据
-      this.logger.warn(`工作中`);
     });
 
     this.schedulerRegistry.addCronJob(name, job);
@@ -138,12 +148,7 @@ export class ScheduleService {
   }
 
   // 生成规则
-  async getClassHoursTaskCorn({
-    classScheduleId,
-    timeId,
-    weekDay,
-    keepTime,
-  }: any) {
+  async getClassHoursTaskCorn({ classScheduleId, timeId, weekDay }: any) {
     let cornTab = 's m h * M w';
     const schedule = (
       await this.classSchdule.findByPk(classScheduleId)
@@ -159,7 +164,7 @@ export class ScheduleService {
       .replace('M', starM === endM ? starM + '' : `${starM}-${endM}`)
       .replace('y', `2023`)
       .replace('h', `${time.startTime.split(':')[0]}`)
-      .replace('m', `${Number(mut) - keepTime * 1}`)
+      .replace('m', `${Number(mut)}`)
       .replace('s', `0`);
 
     return cornTab;

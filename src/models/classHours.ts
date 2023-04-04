@@ -22,6 +22,7 @@ export interface ClassHoursType {
   timingId?: string; // 轮询id
   classScheduleId?: string; // 课程id
   weekDay?: string; //星期几
+  [k: string]: any;
 }
 
 /**
@@ -62,4 +63,6 @@ export class ClassHours
 
   @Column
   weekDay?: string;
+
+  getTiming: () => any;
 }
