@@ -172,7 +172,9 @@ export class ScheduleService {
 
   // 删除任务
   deleteCron(name: string) {
-    this.schedulerRegistry.deleteCronJob(name);
-    this.logger.warn(`任务 ${name} 终止!`);
+    if (this.schedulerRegistry.doesExist('cron', name)) {
+      this.schedulerRegistry.deleteCronJob(name);
+      this.logger.warn(`任务 ${name} 终止!`);
+    }
   }
 }

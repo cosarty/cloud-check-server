@@ -28,7 +28,7 @@ export class ClassHoursController {
     const keepTime = pram.keepTime ?? 1;
 
     const isFace = pram.isFace ?? false;
-    const isPeriod = pram.isPeriod;
+    const isPeriod = pram.isPeriod ?? false;
     let timing;
 
     // 设置定时任务
@@ -90,8 +90,8 @@ export class ClassHoursController {
       });
       await data.destroy();
       if (ti) {
-        await this.schedule.deleteCron(ti.scheduleName);
         await ti.destroy();
+        this.schedule.deleteCron(ti.scheduleName);
       }
     }
     // 删除定时任务
@@ -104,13 +104,15 @@ export class ClassHoursController {
     const {
       isFace = false,
       keepTime: integral = 1,
-      isPeriod,
+      isPeriod = false,
       classScheduleId,
     } = pram;
+
     //  更新classhours 数据
     const hours = await this.classHourse.findByPk(pram.classHoursId);
+
     //如果有开启定时任务就 更新timing数据  没有开启的话判断一下之前是否有开启 如果有的话就删除
-    if (hours.timingId) {
+    if (hours?.timingId) {
       const timing = await hours.getTiming();
       //  更新 定时数据
       await this.timing.update(
@@ -127,12 +129,14 @@ export class ClassHoursController {
           await this.schedule.addTimingTask(timing.scheduleName, timing.period);
         }
       }
-    } else if (!hours.timingId && pram.isPeriod) {
+    } else if (!hours?.timingId && pram.isPeriod) {
       // 创建定时任务
       const scheduleName = nanoid();
 
       const rule = await this.schedule.getClassHoursTaskCorn({
-        ...pram,
+        classScheduleId,
+        timeId: hours.timeId,
+        weekDay: hours.weekDay,
       });
       await this.schedule.addTimingTask(scheduleName, rule);
 
@@ -140,7 +144,7 @@ export class ClassHoursController {
       const timig = await this.timing.create(
         {
           scheduleName: scheduleName,
-          taskName: pram.weekDay + '课程自动轮询',
+          taskName: hours.weekDay + '课程自动轮询',
           userId: user.userId,
           period: rule,
           integral: integral * 60, // 持续时间
@@ -162,8 +166,14 @@ export class ClassHoursController {
         },
       );
 
-      hours.timingId = timig.timingId;
-      await hours.save();
+      await this.classHourse.update(
+        { timingId: timig.timingId },
+        {
+          where: {
+            classHoursId: pram.classHoursId,
+          },
+        },
+      );
     }
 
     return { message: '更新成功' };
