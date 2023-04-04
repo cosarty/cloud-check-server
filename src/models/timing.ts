@@ -17,9 +17,9 @@ export interface TimingType {
   taskName: string;
   location: string; // 位置
   areaId: string; //位置id,
-  sustain: number; // 持续时间
+  sustain: number; //签到分数
   userId?: string;
-  integral: number; // 签到分数
+  integral: number; // 持续时间
   period: string; // 周期  月m 日d 周w  定时任务周期
   distance: number; // 签到距离
   isFace: boolean; // 是否开启人脸
@@ -46,6 +46,7 @@ export class TimingTask extends Model<TimingTask> implements TimingType {
 
   @Column
   distance: number;
+  @Default(1)
   @Column
   sustain: number;
   @BelongsTo(() => User, { foreignKey: 'userId' })

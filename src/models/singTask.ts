@@ -17,13 +17,13 @@ import { Department } from './department';
 export interface SingTaskType {
   singTaskId: string;
   classScheduleId?: string;
-  taskName: string;
+  taskName: string; // 签到时间
   location: string; // 位置
   areaId: string; //位置id,
-  singTime: Date; // 签到时间
-  sustain: number; // 持续时间
+  singTime: Date;
+  sustain: number; // 签到分数
   userId?: string;
-  integral: number; // 签到分数
+  integral: number; // 签到时间 按秒记录
   distance: number; // 签到距离
 }
 // 签到任务可以分为  班级 课程 和系别
@@ -51,6 +51,7 @@ export class SingTask extends Model<SingTask> implements SingTaskType {
   areaId: string;
   @Column
   singTime: Date;
+  @Default(1)
   @Column
   sustain: number;
   @BelongsTo(() => User, { foreignKey: 'userId' })

@@ -108,6 +108,7 @@ export class ScheduleService {
             course: { courseName },
           },
           classScheduleId,
+          sustain,
         } = ch;
         const scheduleName = nanoid();
         //  创建一条签到信息
@@ -119,6 +120,7 @@ export class ScheduleService {
           taskTime: new Date(),
           classScheduleId,
           isFace,
+          sustain,
         });
         // 创建任务 开启签到
         await this.addTimeout(scheduleName, integral);

@@ -29,6 +29,7 @@ export class ClassHoursController {
 
     const isFace = pram.isFace ?? false;
     const isPeriod = pram.isPeriod ?? false;
+    const sustain = pram.isPeriod ?? 1;
     let timing;
 
     // 设置定时任务
@@ -54,6 +55,7 @@ export class ClassHoursController {
         integral: keepTime * 60, // 持续时间
         isFace,
         isPeriod,
+        sustain,
       },
       {
         fields: [
@@ -65,6 +67,7 @@ export class ClassHoursController {
           'period',
           'isFace',
           'integral',
+          'sustain',
         ],
       },
     );
@@ -106,6 +109,7 @@ export class ClassHoursController {
       keepTime: integral = 1,
       isPeriod = false,
       classScheduleId,
+      sustain = 1,
     } = pram;
 
     //  更新classhours 数据
@@ -151,6 +155,7 @@ export class ClassHoursController {
           isFace,
           isPeriod,
           classScheduleId,
+          sustain,
         },
         {
           fields: [
@@ -162,6 +167,7 @@ export class ClassHoursController {
             'period',
             'isFace',
             'integral',
+            'sustain',
           ],
         },
       );
