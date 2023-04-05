@@ -6,5 +6,8 @@ export class StatInfoController {
   constructor(
     @Inject(ModelsEnum.StatInfo)
     private readonly statInfo: PickModelType<ModelsEnum.StatInfo>,
-  ) {}
+  ) { }
+  
+  
+  
 }

@@ -1,3 +1,4 @@
+import { ScheduleModule } from '../schedule/schedule.module';
 import { TimingController } from './timing.controller';
 /*
 https://docs.nestjs.com/modules
@@ -6,7 +7,7 @@ https://docs.nestjs.com/modules
 import { Module } from '@nestjs/common';
 
 @Module({
-  imports: [],
+  imports: [ScheduleModule],
   controllers: [TimingController],
   providers: [],
 })
