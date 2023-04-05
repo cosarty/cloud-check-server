@@ -1,7 +1,3 @@
-/*
-https://docs.nestjs.com/controllers#controllers
-*/
-
 import { Auth } from '@/common/role/auth.decorator';
 import { ModelsEnum, PickModelType } from '@/models';
 import { Body, Controller, Get, Inject, Param, Post } from '@nestjs/common';
@@ -21,17 +17,34 @@ export class SingTaskController {
 
   @Post('create')
   @Auth()
-  async create(@Body() { classScheduleId }: any) {
-    // 定时  创建时间
+  async create(@Body() data: any) {
     const scheduleName = nanoid();
-    await this.singTask.create({
-      scheduleName,
-      taskName: '测试的签到test',
-      classScheduleId: classScheduleId,
-      integral: 20,
-      taskTime: new Date(),
-    });
-    await this.schedule.addTimeout(scheduleName, 20);
+    await this.singTask.create(
+      {
+        ...data,
+      },
+      {
+        fields: [
+          'classScheduleId',
+          'sustain',
+          'distance',
+          'taskTime',
+          'taskName',
+          'scheduleName',
+          'integral',
+        ],
+      },
+    );
+
+
+    // 判断是不是直接执行的
+    if (data.isCurrent) {
+      await this.schedule.addTimeout(scheduleName,data.integral ?? 60 );      
+    } else {
+      // 开启定时任务
+    }
+   
+
     return { message: '发起成功' };
   }
 

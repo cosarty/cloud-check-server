@@ -77,7 +77,7 @@ export class TimingController {
     console.log('timingId: ', timingId);
     /**
      * 结束掉定时任务
-     * 
+     *
      *
      */
     const timing = await this.timingTask.findByPk(timingId);
@@ -85,26 +85,37 @@ export class TimingController {
 
     // 删除定时任务
     this.schedule.deleteCron(timing.scheduleName);
-     timing.isEnd = true;
-    await timing.save()
-    await this.classHours.update({ timingId: null }, {
-      where: {
-        timingId,
+    timing.isEnd = true;
+    await timing.save();
+    await this.classHours.update(
+      { timingId: null },
+      {
+        where: {
+          timingId,
+        },
       },
-    });
+    );
 
     return { message: '结束成功' };
   }
 
-
   @Post('deleteTask')
   async delTask(@Body() { timingId }: any) {
-    
     await this.timingTask.destroy({
-       where:{timingId}
-     });
-    
+      where: { timingId },
+    });
 
     return { message: '删除成功' };
+  }
+
+  // 更新 目前只做 更新定时和人脸识别
+  @Post('updateTask')
+  async updateTask(@Body() data: any) {
+    await this.timingTask.update(
+      { ...data },
+      { where: { timingId: data.timingId } },
+    );
+
+    return { message: '更新成功' };
   }
 }

@@ -104,23 +104,31 @@ export class ScheduleService {
           integral = 60,
           timingId,
           isFace,
+          location,
+          locationName,
+          distance,
           classSchedule: {
             course: { courseName },
           },
           classScheduleId,
           sustain,
+          areaId
         } = ch;
         const scheduleName = nanoid();
         //  创建一条签到信息
         await this.singTask.create({
           integral,
           timingId,
+          distance,
           taskName: courseName + '(签到)',
           scheduleName,
           taskTime: new Date(),
           classScheduleId,
           isFace,
           sustain,
+          location,
+          locationName,
+          areaId
         });
         // 创建任务 开启签到
         await this.addTimeout(scheduleName, integral);
@@ -147,6 +155,23 @@ export class ScheduleService {
 
     const timeout = setTimeout(callback, seconds * 1000);
     this.schedulerRegistry.addTimeout(name, timeout);
+  }
+
+
+  // 创建单次的任务
+  async singTaskCorn(name: string, date: Date) {
+    this.logger.debug(`启动 ${name}----（${dayjs(date).format('YYYY-MM-DD hh:mm')}）`);
+    const job = new CronJob(date, async () => {
+    const sing =    await this.singTask.findOne({
+        where: {
+        scheduleName:name
+      }
+    })
+      if(sing)
+       this.addTimeout(sing.scheduleName,sing.integral)
+    })
+      this.schedulerRegistry.addCronJob(name, job);
+      job.start();
   }
 
   // 生成规则

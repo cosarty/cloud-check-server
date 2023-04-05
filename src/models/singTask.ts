@@ -1,4 +1,3 @@
-import { getId } from '@/util/utils';
 import {
   BelongsTo,
   Column,
@@ -25,6 +24,7 @@ export interface SingTaskType {
   userId?: string;
   integral: number; // 签到时间 按秒记录
   distance: number; // 签到距离
+  locationName?:string // 地址
 }
 // 签到任务可以分为  班级 课程 和系别
 
@@ -73,10 +73,6 @@ export class SingTask extends Model<SingTask> implements SingTaskType {
   isEnd: boolean;
 
   timingId: string;
-
-  @BelongsTo(() => Class, { foreignKey: 'classId' })
-  classInfo: Class;
-  classId: string;
 
   @Column
   distance: number;
