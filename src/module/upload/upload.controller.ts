@@ -33,7 +33,7 @@ export class UploadController {
     @User() payload: any,
     @Body() pram: any,
   ) {
-    console.log('pram: ', pram);
+
 
     if (pram.flag !== 'update') {
       await this.user.update(

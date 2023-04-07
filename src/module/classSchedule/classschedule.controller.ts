@@ -3,6 +3,7 @@ import { Auth } from '@/common/role/auth.decorator';
 import { ModelsEnum, PickModelType } from '@/models';
 import { Body, Controller, Get, Inject, Param, Post } from '@nestjs/common';
 import { ClassscheduleService } from './classschedule.service';
+import { Op } from 'sequelize';
 
 @Controller('classSchedule')
 export class ClassScheduleController {
@@ -18,8 +19,6 @@ export class ClassScheduleController {
 
   @Post('create')
   async create(@Body() pram: any) {
-    console.log('pram: ', pram);
-
     await this.classSchedule.create(pram, {
       fields: ['classId', 'courseId', 'starDate', 'endDate'],
     });
@@ -41,6 +40,9 @@ export class ClassScheduleController {
           association: 'course',
           where: {
             userId: user.userId,
+          },
+          through: {
+            where: { isEnd: false },
           },
         },
         { association: 'teacher' },
@@ -75,7 +77,7 @@ export class ClassScheduleController {
   @Get('checkCourse/:id')
   async checkCourse(@Param() pram: any) {
     return await this.classSchedule.findOne({
-      where: { classScheduleId: pram.id },
+      where: { classScheduleId: pram.id, isEnd: false },
       include: [{ association: 'classHours', include: ['time', 'timing'] }],
     });
   }
@@ -84,7 +86,7 @@ export class ClassScheduleController {
   @Get('checkClassCourse/:id')
   async checkClassCourse(@Param() pram: any) {
     return await this.classSchedule.findAll({
-      where: { classId: pram.id },
+      where: { classId: pram.id, isEnd: false },
       include: [
         { association: 'classHours', include: ['time', 'timing'] },
         { association: 'course', include: ['user'] },
@@ -99,5 +101,30 @@ export class ClassScheduleController {
     await this.classScheduleServe.deleteSchedule(classScheduleId);
 
     return { message: '删除成功' };
+  }
+
+  // 获取自己已经下发的课程 只能获取已经开始的并且未结束的
+  @Get('getClassChedule')
+  @Auth()
+  async getClassChedule(@User() user) {
+    return await this.classSchedule.findAll({
+      where: {
+        starDate: { [Op.lte]: new Date() },
+        endDate: { [Op.gte]: new Date() },
+        isEnd:false
+      },
+      include: [
+        {
+          required: true,
+          association: 'course',
+          where: {
+            userId: user.userId,
+          },
+        },
+        {
+          association: 'class',
+        },
+      ],
+    });
   }
 }

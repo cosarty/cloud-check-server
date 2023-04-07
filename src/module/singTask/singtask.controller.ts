@@ -14,7 +14,6 @@ export class SingTaskController {
   ) {}
 
   //   创建签到
-
   @Post('create')
   @Auth()
   async create(@Body() data: any) {
@@ -36,16 +35,14 @@ export class SingTaskController {
       },
     );
 
-
     // 判断是不是直接执行的
     if (data.isCurrent) {
-      await this.schedule.addTimeout(scheduleName,data.integral ?? 60 );      
+      await this.schedule.addTimeout(scheduleName, data.integral ?? 60);
     } else {
       // 开启定时任务
     }
-   
 
-    return { message: '发起成功' };
+    return { message: '发起成功' }; 
   }
 
   // 获取签到
