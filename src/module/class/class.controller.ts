@@ -25,6 +25,7 @@ import {
   UpdateClassDto,
 } from './dto/update-class.dto';
 import { Op } from 'sequelize';
+import { ClassscheduleService } from '../classSchedule/classschedule.service';
 
 /**
  * // TODO 统计班级签到信息
@@ -41,6 +42,7 @@ export class ClassController {
     private readonly user: PickModelType<ModelsEnum.User>,
     @Inject(ModelsEnum.ClassSchedule)
     private readonly classSchedule: PickModelType<ModelsEnum.ClassSchedule>,
+    private readonly classSchduelServe: ClassscheduleService,
   ) {}
   @Post('create')
   @Super()
@@ -77,11 +79,16 @@ export class ClassController {
   @Super()
   @HttpCode(203)
   async deleteClass(@Param() payload: deleteClassDto) {
-    await this.classSchedule.destroy({
+    const chedule = await this.classSchedule.findAll({
       where: {
         classId: payload.classId,
       },
     });
+
+    // 删除classSchdule
+    for (const ch of chedule) {
+      await this.classSchduelServe.deleteSchedule(ch.classScheduleId);
+    }
     await this.user.update(
       { classId: null },
       { where: { classId: payload.classId } },

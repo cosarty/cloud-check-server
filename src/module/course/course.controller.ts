@@ -14,6 +14,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { ClassscheduleService } from '../classSchedule/classschedule.service';
 
 @Controller('course')
 export class CourseController {
@@ -24,6 +25,7 @@ export class CourseController {
     private readonly classSchedule: PickModelType<ModelsEnum.ClassSchedule>,
     @Inject(ModelsEnum.ClassHours)
     private readonly classHours: PickModelType<ModelsEnum.ClassHours>,
+    private readonly classSchduelServe: ClassscheduleService,
   ) {}
 
   // 创建课程
@@ -72,22 +74,17 @@ export class CourseController {
   @Post('delete/:courseId')
   @Auth()
   async delteCourse(@Param() pram: any) {
-    const chedule = await this.classSchedule.findOne({
+    const chedule = await this.classSchedule.findAll({
       where: {
         courseId: pram.courseId,
       },
     });
-    await this.classSchedule.destroy({
-      where: {
-        courseId: pram.courseId,
-      },
-    });
-    if (chedule) {
-      await this.classHours.destroy({
-        where: { classScheduleId: chedule.classScheduleId },
-      });
-    }
 
+    // 删除classSchdule
+    for (const ch of chedule) {
+      await this.classSchduelServe.deleteSchedule(ch.classScheduleId)
+    }
+   
     await this.course.destroy({
       where: {
         courseId: pram.courseId,

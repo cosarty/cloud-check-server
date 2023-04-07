@@ -2,6 +2,7 @@ import { User } from '@/common/decorator/user.decorator';
 import { Auth } from '@/common/role/auth.decorator';
 import { ModelsEnum, PickModelType } from '@/models';
 import { Body, Controller, Get, Inject, Param, Post } from '@nestjs/common';
+import { ClassscheduleService } from './classschedule.service';
 
 @Controller('classSchedule')
 export class ClassScheduleController {
@@ -12,6 +13,7 @@ export class ClassScheduleController {
     private readonly classModle: PickModelType<ModelsEnum.Class>,
     @Inject(ModelsEnum.Course)
     private readonly course: PickModelType<ModelsEnum.Course>,
+    private readonly classScheduleServe: ClassscheduleService,
   ) {}
 
   @Post('create')
@@ -88,5 +90,14 @@ export class ClassScheduleController {
         { association: 'course', include: ['user'] },
       ],
     });
+  }
+
+  // 删除接口
+  @Post('delete')
+  @Auth()
+  async deleteSchdule(@Body() { classScheduleId }: any) {
+    await this.classScheduleServe.deleteSchedule(classScheduleId);
+
+    return { message: '删除成功' };
   }
 }

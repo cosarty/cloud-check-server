@@ -8,6 +8,7 @@ import { ModelsEnum, PickModelType } from '@/models';
 import { Body, Controller, Delete, Inject, Param, Post } from '@nestjs/common';
 import { nanoid } from 'nanoid';
 import { ScheduleService } from '../schedule/schedule.service';
+import { ClassHoursService } from './classhours.service';
 
 @Controller('classHourse')
 export class ClassHoursController {
@@ -18,6 +19,7 @@ export class ClassHoursController {
     private readonly timing: PickModelType<ModelsEnum.TimingTask>,
 
     private readonly schedule: ScheduleService,
+    private readonly clssHoursServe: ClassHoursService,
   ) {}
 
   // 创建时间
@@ -84,19 +86,7 @@ export class ClassHoursController {
 
   @Delete('del/:id')
   async deleteHourse(@Param() param: any) {
-    const data = await this.classHourse.findOne({
-      where: { classHoursId: param.id },
-    });
-    if (data) {
-      const ti = await this.timing.findOne({
-        where: { timingId: data.timingId },
-      });
-      await data.destroy();
-      if (ti) {
-        await ti.destroy();
-        this.schedule.deleteCron(ti.scheduleName);
-      }
-    }
+    await this.clssHoursServe.deleteHourse(param.id);
     // 删除定时任务
     return { message: '删除成功' };
   }

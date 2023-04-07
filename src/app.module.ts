@@ -1,3 +1,4 @@
+
 import { StatInfoModule } from './module/statInfo/statinfo.module';
 import { AreaModule } from './module/area/area.module';
 import { SingTaskModule } from './module/singTask/singtask.module';
