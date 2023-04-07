@@ -62,6 +62,7 @@ export class ScheduleService {
       include: {
         association: 'classSchedule',
         where: {
+          isEnd: false,
           starDate: {
             [Op.lte]: new Date(),
           },
@@ -75,6 +76,28 @@ export class ScheduleService {
     // 开启轮询
     for (const t of timing) {
       this.addTimingTask(t.scheduleName, t.period);
+    }
+
+    // 开启当初轮询
+    const singTask = await this.singTask.findAll({
+      where: { isEnd: false, taskTime: { [Op.gte]: new Date() } },
+      include: {
+        association: 'classSchedule',
+        where: {
+          isEnd: false,
+          starDate: { 
+            [Op.lte]: new Date(),
+          },
+          endDate: {
+            [Op.gte]: new Date(),
+          },
+        },
+      },
+    });
+ 
+    for (const sing of singTask) {
+
+      this.singTaskCorn(sing.scheduleName, new Date(sing.taskTime));
     }
   }
 
@@ -105,6 +128,7 @@ export class ScheduleService {
           timingId,
           isFace,
           location,
+          userId,
           locationName,
           distance,
           classSchedule: {
@@ -112,11 +136,12 @@ export class ScheduleService {
           },
           classScheduleId,
           sustain,
-          areaId
+          areaId,
         } = ch;
         const scheduleName = nanoid();
         //  创建一条签到信息
         await this.singTask.create({
+          userId,
           integral,
           timingId,
           distance,
@@ -128,7 +153,7 @@ export class ScheduleService {
           sustain,
           location,
           locationName,
-          areaId
+          areaId,
         });
         // 创建任务 开启签到
         await this.addTimeout(scheduleName, integral);
@@ -143,12 +168,16 @@ export class ScheduleService {
 
   // 设置定时
   async addTimeout(name: string, seconds: number) {
-    this.logger.debug(`开启任务 ${name}`);
+    this.logger.debug(`开启任务 --- 定时器 ${name}`);
+    await this.singTask.update(
+      { isRun: true },
+      { where: { scheduleName: name } },
+    );
     const callback = async () => {
       this.logger.warn(`任务结束 ${name}`);
       // 关闭签到
       await this.singTask.update(
-        { isEnd: true },
+        { isEnd: true, isRun: false },
         { where: { scheduleName: name } },
       );
     };
@@ -157,21 +186,21 @@ export class ScheduleService {
     this.schedulerRegistry.addTimeout(name, timeout);
   }
 
-
   // 创建单次的任务
   async singTaskCorn(name: string, date: Date) {
-    this.logger.debug(`启动 ${name}----（${dayjs(date).format('YYYY-MM-DD hh:mm')}）`);
+    this.logger.debug(
+      `启动 单次任务 ${name}----（${dayjs(date).format('YYYY-MM-DD hh:mm')}）`,
+    );
     const job = new CronJob(date, async () => {
-    const sing =    await this.singTask.findOne({
+      const sing = await this.singTask.findOne({
         where: {
-        scheduleName:name
-      }
-    })
-      if(sing)
-       this.addTimeout(sing.scheduleName,sing.integral)
-    })
-      this.schedulerRegistry.addCronJob(name, job);
-      job.start();
+          scheduleName: name,
+        },
+      });
+      if (sing) this.addTimeout(sing.scheduleName, sing.integral);
+    });
+    this.schedulerRegistry.addCronJob(name, job);
+    job.start();
   }
 
   // 生成规则

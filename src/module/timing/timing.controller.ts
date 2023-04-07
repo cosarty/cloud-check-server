@@ -43,6 +43,15 @@ export class TimingController {
         {
           required: true,
           association: 'classSchedule',
+          where: {
+            isEnd:false,
+            starDate: {
+              [Op.lte]: new Date(),
+            },
+            endDate: {
+              [Op.gte]: new Date(),
+            },
+          },
           include: [
             {
               association: 'course',

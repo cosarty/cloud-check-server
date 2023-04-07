@@ -12,6 +12,7 @@ import { UUIDV4 } from 'sequelize';
 import { TimingTask } from './timing';
 import { Class } from './class';
 import { Department } from './department';
+import { Area } from './area';
 
 export interface SingTaskType {
   singTaskId: string;
@@ -23,7 +24,7 @@ export interface SingTaskType {
   userId?: string;
   integral: number; // 签到时间 按秒记录
   distance: number; // 签到距离
-  locationName?:string // 地址
+  locationName?: string; // 地址
 }
 // 签到任务可以分为  班级 课程 和系别
 
@@ -46,20 +47,26 @@ export class SingTask extends Model<SingTask> implements SingTaskType {
   location: string;
   @Column
   locationName: string;
-  @Column
-  areaId: string;
 
+  @BelongsTo(() => Area, { foreignKey: 'areaId' })
+  area: Area;
+
+  areaId:string
   @Default(1)
   @Column
   sustain: number;
   @BelongsTo(() => User, { foreignKey: 'userId' })
   user: User;
+
+  userId?: string;
   @Column
   integral: number;
+
   @Column
   scheduleName: string; //定时任务名字
-
-
+  @Default(false)
+  @Column
+  isRun: boolean;
 
   // 轮询id 用来判断这次的签到是单次的还是轮询推送的
   @BelongsTo(() => TimingTask, { foreignKey: 'timingId' })
@@ -73,7 +80,6 @@ export class SingTask extends Model<SingTask> implements SingTaskType {
 
   @Column
   distance: number;
-
 
   @Default(false)
   @Column
