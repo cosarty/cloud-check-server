@@ -19,7 +19,6 @@ export interface SingTaskType {
   taskName: string; // 签到时间
   location: string; // 位置
   areaId: string; //位置id,
-  singTime: Date;
   sustain: number; // 签到分数
   userId?: string;
   integral: number; // 签到时间 按秒记录
@@ -49,8 +48,7 @@ export class SingTask extends Model<SingTask> implements SingTaskType {
   locationName: string;
   @Column
   areaId: string;
-  @Column
-  singTime: Date;
+
   @Default(1)
   @Column
   sustain: number;
@@ -61,8 +59,7 @@ export class SingTask extends Model<SingTask> implements SingTaskType {
   @Column
   scheduleName: string; //定时任务名字
 
-  @Column
-  period: string; // 时间规则
+
 
   // 轮询id 用来判断这次的签到是单次的还是轮询推送的
   @BelongsTo(() => TimingTask, { foreignKey: 'timingId' })
@@ -77,10 +74,6 @@ export class SingTask extends Model<SingTask> implements SingTaskType {
   @Column
   distance: number;
 
-  @BelongsTo(() => Department, { foreignKey: 'departmentId' })
-  department: Department;
-
-  departmentId: string;
 
   @Default(false)
   @Column
