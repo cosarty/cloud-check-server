@@ -52,7 +52,7 @@ export class SingTaskController {
           'areaId',
           'userId',
           'locationName',
-          'location'
+          'location',
         ],
       },
     );
@@ -100,37 +100,44 @@ export class SingTaskController {
         userId: user.userId,
         ...(isHistory ? {} : { taskTime: { [Op.gte]: new Date() } }),
       },
-      include: [{association:'area'},{
-        required: true,
-        association: 'classSchedule',
-        where: {
-          isEnd: false,
-          starDate: {
-            [Op.lte]: new Date(),
+      include: [
+        { association: 'area' },
+        {
+          required: true,
+          association: 'classSchedule',
+          where: {
+            ...(isHistory
+              ? {}
+              : {
+                  isEnd: false,
+                  starDate: {
+                    [Op.lte]: new Date(),
+                  },
+                  endDate: {
+                    [Op.gte]: new Date(),
+                  },
+                }),
           },
-          endDate: {
-            [Op.gte]: new Date(),
-          },
+          include: [
+            {
+              association: 'course',
+              where: {
+                ...(courseName
+                  ? { courseName: { [Op.substring]: courseName } }
+                  : {}),
+              },
+            },
+            {
+              association: 'class',
+              where: {
+                ...(className
+                  ? { className: { [Op.substring]: className } }
+                  : {}),
+              },
+            },
+          ],
         },
-        include: [
-          {
-            association: 'course',
-            where: {
-              ...(courseName
-                ? { courseName: { [Op.substring]: courseName } }
-                : {}),
-            },
-          },
-          {
-            association: 'class',
-            where: {
-              ...(className
-                ? { className: { [Op.substring]: className } }
-                : {}),
-            },
-          },
-        ],
-      },]
+      ],
     });
   }
 

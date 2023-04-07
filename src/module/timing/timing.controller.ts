@@ -35,6 +35,10 @@ export class TimingController {
     }: any,
     @User() user,
   ) {
+    
+    // 83cbc873-e219-475c-adb0-36f4604772d2
+
+
     return await this.timingTask.findAndCountAll({
       order: [['createdAt', 'DESC']],
       ...(pageSize ? { limit: Number(pageSize) ?? 0 } : {}),
@@ -44,13 +48,17 @@ export class TimingController {
           required: true,
           association: 'classSchedule',
           where: {
-            isEnd:false,
-            starDate: {
-              [Op.lte]: new Date(),
-            },
-            endDate: {
-              [Op.gte]: new Date(),
-            },
+            ...(isHistory
+              ? {}
+              : {
+                  isEnd: false,
+                  starDate: {
+                    [Op.lte]: new Date(),
+                  },
+                  endDate: {
+                    [Op.gte]: new Date(),
+                  },
+                }),
           },
           include: [
             {
