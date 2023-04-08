@@ -21,7 +21,8 @@ export class SingTaskController {
   constructor(
     @Inject(ModelsEnum.SingTask)
     private readonly singTask: PickModelType<ModelsEnum.SingTask>,
-
+    @Inject(ModelsEnum.StatInfo)
+    private readonly statInfo: PickModelType<ModelsEnum.StatInfo>,
     private readonly schedule: ScheduleService,
   ) {}
 
@@ -189,5 +190,30 @@ export class SingTaskController {
         ],
       },
     });
+  }
+
+  // 结束定时任务
+  @Post('endTask')
+  @Auth()
+  async endTask(@Body() { singTaskId }: any) {
+    const sing = await this.singTask.findByPk(singTaskId);
+    // 删除定时任务
+    this.schedule.deleteCron(sing.scheduleName);
+    sing.isEnd = true;
+    await sing.save();
+    return { message: '结束成功' };
+  }
+
+  // 删除定时任务
+  // 删除的话记录都会消失
+  @Post('deleteTask')
+  async delTask(@Body() { singTaskId }: any) {
+    await this.singTask.destroy({
+      where: { singTaskId },
+    });
+    await this.statInfo.destroy({
+      where: { singTaskId },
+    });
+    return { message: '删除成功' };
   }
 }

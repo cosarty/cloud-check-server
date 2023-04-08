@@ -9,6 +9,7 @@ import {
 } from 'sequelize-typescript';
 import { User } from '@/models/users';
 import { ClassSchedule } from './classSchedule';
+import { SingTask } from './singTask';
 
 export interface StatInfoType {
   statId: string;
@@ -43,4 +44,10 @@ export class StatInfo extends Model<StatInfo> implements StatInfoType {
 
   @Column
   locationName: string; // 签到地点的名字
+
+  // 签到id
+  @BelongsTo(() => SingTask, { foreignKey: 'singTaskId' })
+  singTask: string;
+
+  singTaskId:string
 }

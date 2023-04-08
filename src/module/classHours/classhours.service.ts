@@ -13,7 +13,7 @@ export class ClassHoursService {
     private readonly classHourse: PickModelType<ModelsEnum.ClassHours>,
     @Inject(ModelsEnum.TimingTask)
     private readonly timing: PickModelType<ModelsEnum.TimingTask>,
-
+ 
     private readonly schedule: ScheduleService,
   ) {}
 

@@ -91,15 +91,8 @@ export class TimingController {
   // 结束结束定时任务
   @Post('endTask')
   async endTask(@Body() { timingId }: any) {
-    console.log('timingId: ', timingId);
-    /**
-     * 结束掉定时任务
-     *
-     *
-     */
-    const timing = await this.timingTask.findByPk(timingId);
-    console.log('timing: ', timing);
 
+    const timing = await this.timingTask.findByPk(timingId);
     // 删除定时任务
     this.schedule.deleteCron(timing.scheduleName);
     timing.isEnd = true;
