@@ -21,6 +21,10 @@ export class AreaController {
   constructor(
     @Inject(ModelsEnum.Area)
     private readonly area: PickModelType<ModelsEnum.Area>,
+    @Inject(ModelsEnum.SingTask)
+    private readonly singTask: PickModelType<ModelsEnum.SingTask>,
+    @Inject(ModelsEnum.TimingTask)
+    private readonly timingTask: PickModelType<ModelsEnum.TimingTask>,
   ) {}
 
   @Post('create')
@@ -45,6 +49,23 @@ export class AreaController {
         areaId: data.areaId,
       },
     });
+
+    await this.singTask.update(
+      { areaId: null },
+      {
+        where: {
+          areaId,
+        },
+      },
+    );
+    await this.timingTask.update(
+      { areaId: null },
+      {
+        where: {
+          areaId,
+        },
+      },
+    );
     return { message: '更新成功' };
   }
 

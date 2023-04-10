@@ -1,13 +1,10 @@
-/*
-https://docs.nestjs.com/controllers#controllers
-*/
-
 import { Auth } from '@/common/role/auth.decorator';
 import { ModelsEnum, PickModelType } from '@/models';
 import { Body, Controller, Inject, Post } from '@nestjs/common';
 import { ScheduleService } from '../schedule/schedule.service';
 import { User } from '@/common/decorator/user.decorator';
 import { Op } from 'sequelize';
+import * as dayjs from 'dayjs';
 
 @Controller('timing')
 export class TimingController {
@@ -35,9 +32,7 @@ export class TimingController {
     }: any,
     @User() user,
   ) {
-    
     // 83cbc873-e219-475c-adb0-36f4604772d2
-
 
     return await this.timingTask.findAndCountAll({
       order: [['createdAt', 'DESC']],
@@ -79,6 +74,10 @@ export class TimingController {
             },
           ],
         },
+        {
+          association: 'classHours',
+          include: [{ association: 'time' }],
+        },
       ],
       where: {
         ...(taskName ? { taskName: { [Op.substring]: taskName } } : {}),
@@ -91,7 +90,6 @@ export class TimingController {
   // 结束结束定时任务
   @Post('endTask')
   async endTask(@Body() { timingId }: any) {
-
     const timing = await this.timingTask.findByPk(timingId);
     // 删除定时任务
     this.schedule.deleteCron(timing.scheduleName);
@@ -121,10 +119,16 @@ export class TimingController {
   // 更新 目前只做 更新定时和人脸识别
   @Post('updateTask')
   async updateTask(@Body() data: any) {
+    // 其他的话就直接入库
+
+    const taskInfo = await this.timingTask.findByPk(data.timingId);
     await this.timingTask.update(
       { ...data },
       { where: { timingId: data.timingId } },
     );
+
+    taskInfo.set({ ...data });
+    await taskInfo.save();
 
     return { message: '更新成功' };
   }

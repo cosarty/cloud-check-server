@@ -26,7 +26,7 @@ export class ClassHoursController {
   @Post('create')
   @Auth()
   async create(@Body() pram: any, @User() user) {
-    // 课前几分钟发起签到
+    // 持续时间
     const keepTime = pram.keepTime ?? 1;
 
     const isFace = pram.isFace ?? false;

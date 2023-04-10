@@ -14,7 +14,7 @@ import { ScheduleService } from '../schedule/schedule.service';
 import { User } from '@/common/decorator/user.decorator';
 import { Op } from 'sequelize';
 import * as dayjs from 'dayjs';
-import sequelize from 'sequelize';
+
 
 @Controller('singTask')
 export class SingTaskController {

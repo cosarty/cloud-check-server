@@ -3,6 +3,7 @@ import {
   BelongsTo,
   Column,
   Default,
+  HasOne,
   Model,
   PrimaryKey,
   Table,
@@ -10,6 +11,8 @@ import {
 import { User } from '@/models/users';
 import { ClassSchedule } from './classSchedule';
 import { UUIDV4 } from 'sequelize';
+import { Time } from './time';
+import { ClassHours } from './classHours';
 
 export interface TimingType {
   timingId: string;
@@ -75,4 +78,7 @@ export class TimingTask extends Model<TimingTask> implements TimingType {
   @Default(false)
   @Column
   isFace: boolean;
+
+  @HasOne(() => ClassHours, { foreignKey: 'timingId' })
+  classHours: ClassHours;
 }
