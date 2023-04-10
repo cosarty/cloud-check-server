@@ -13,7 +13,7 @@ import { nanoid } from 'nanoid';
 import { ScheduleService } from '../schedule/schedule.service';
 import { User } from '@/common/decorator/user.decorator';
 import { Op } from 'sequelize';
-import dayjs from 'dayjs';
+import * as dayjs from 'dayjs';
 import sequelize from 'sequelize';
 
 @Controller('singTask')
@@ -142,7 +142,7 @@ export class SingTaskController {
     });
   }
 
-  // 或者正在运行的任务
+  // 正在运行的任务
   @Post('getCurrentTask')
   @Auth()
   async getCurrentTask(
@@ -200,6 +200,7 @@ export class SingTaskController {
     // 删除定时任务
     this.schedule.deleteCron(sing.scheduleName);
     sing.isEnd = true;
+    sing.isRun = false;
     await sing.save();
     return { message: '结束成功' };
   }
@@ -215,5 +216,28 @@ export class SingTaskController {
       where: { singTaskId },
     });
     return { message: '删除成功' };
+  }
+
+  // 更新定时任务
+  @Post('updateSingTask')
+  @Auth()
+  async updateSingTask(@Body() data: any) {
+    // 如果更新了时间的话 就重新启动定时任务
+    // 其他的话就直接入库
+
+    const singInfo = await this.singTask.findByPk(data.singTaskId);
+
+    // 如果签到时间不一致的话就重置定时任务
+    if (!dayjs(singInfo.taskTime).isSame(dayjs(data.taskTime))) {
+      data.scheduleName = nanoid();
+      // 停止定时任务
+      this.schedule.deleteCron(singInfo.scheduleName);
+      // 重新开启
+      this.schedule.singTaskCorn(data.scheduleName, new Date(data.taskTime));
+    }
+    singInfo.set({ ...data });
+    await singInfo.save();
+
+    return { message: '更新成功' };
   }
 }

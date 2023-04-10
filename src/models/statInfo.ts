@@ -30,6 +30,8 @@ export class StatInfo extends Model<StatInfo> implements StatInfoType {
   classSchedule: string;
   @BelongsTo(() => User, { foreignKey: 'userId' })
   user: string;
+
+  userId: string;
   @Column
   statTime: Date;
   @Column

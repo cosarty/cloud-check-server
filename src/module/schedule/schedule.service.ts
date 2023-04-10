@@ -85,7 +85,7 @@ export class ScheduleService {
         association: 'classSchedule',
         where: {
           isEnd: false,
-          starDate: { 
+          starDate: {
             [Op.lte]: new Date(),
           },
           endDate: {
@@ -94,9 +94,8 @@ export class ScheduleService {
         },
       },
     });
- 
-    for (const sing of singTask) {
 
+    for (const sing of singTask) {
       this.singTaskCorn(sing.scheduleName, new Date(sing.taskTime));
     }
   }
@@ -175,11 +174,22 @@ export class ScheduleService {
     );
     const callback = async () => {
       this.logger.warn(`任务结束 ${name}`);
-      // 关闭签到
-      await this.singTask.update(
-        { isEnd: true, isRun: false },
-        { where: { scheduleName: name } },
-      );
+
+      const task = await this.singTask.findOne({
+        where: { scheduleName: name, isRun: true },
+      });
+      // 判断是否提前结束
+      if (task) {
+        // 关闭签到
+        task.isEnd = true;
+        task.isRun = true;
+        await task.save();
+      }
+
+      // await this.singTask.update(
+      //   { isEnd: true, isRun: false },
+      //   { where: { scheduleName: name } },
+      // );
     };
 
     const timeout = setTimeout(callback, seconds * 1000);
