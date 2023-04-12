@@ -12,6 +12,8 @@ export class ClassScheduleController {
     private readonly classSchedule: PickModelType<ModelsEnum.ClassSchedule>,
     @Inject(ModelsEnum.Class)
     private readonly classModle: PickModelType<ModelsEnum.Class>,
+    @Inject(ModelsEnum.User)
+    private readonly userModel: PickModelType<ModelsEnum.User>,
     @Inject(ModelsEnum.Course)
     private readonly course: PickModelType<ModelsEnum.Course>,
     private readonly classScheduleServe: ClassscheduleService,
@@ -42,7 +44,15 @@ export class ClassScheduleController {
             userId: user.userId,
           },
           through: {
-            where: { isEnd: false },
+            where: {
+              isEnd: false,
+              starDate: {
+                [Op.lte]: new Date(),
+              },
+              endDate: {
+                [Op.gte]: new Date(),
+              },
+            },
           },
         },
         { association: 'teacher' },
@@ -65,7 +75,19 @@ export class ClassScheduleController {
           where: {
             classId: user.classId,
           },
+          through: {
+            where: {
+              isEnd: false,
+              starDate: {
+                [Op.lte]: new Date(),
+              },
+              endDate: {
+                [Op.gte]: new Date(),
+              },
+            },
+          },
         },
+
         { association: 'user' },
       ],
     });
@@ -78,7 +100,11 @@ export class ClassScheduleController {
   async checkCourse(@Param() pram: any) {
     return await this.classSchedule.findOne({
       where: { classScheduleId: pram.id, isEnd: false },
-      include: [{ association: 'classHours', include: ['time', 'timing'] }],
+      include: [
+        { association: 'classHours', include: ['time', 'timing'] },
+        { association: 'course', required: true },
+        { association: 'class' },
+      ],
     });
   }
 
@@ -88,8 +114,14 @@ export class ClassScheduleController {
     return await this.classSchedule.findAll({
       where: { classId: pram.id, isEnd: false },
       include: [
+        {
+          association: 'class',
+        },
         { association: 'classHours', include: ['time', 'timing'] },
-        { association: 'course', include: ['user'] },
+        {
+          association: 'course',
+          include: ['user'],
+        },
       ],
     });
   }
@@ -111,7 +143,7 @@ export class ClassScheduleController {
       where: {
         starDate: { [Op.lte]: new Date() },
         endDate: { [Op.gte]: new Date() },
-        isEnd:false
+        isEnd: false,
       },
       include: [
         {
@@ -123,6 +155,26 @@ export class ClassScheduleController {
         },
         {
           association: 'class',
+        },
+      ],
+    });
+  }
+
+  // 获取课程学生按照 积分排名
+  @Get('getSchduleStudents/:classScheduleId')
+  async getSchduleStudents(@Param() { classScheduleId }: any) {
+    return await this.classSchedule.findOne({
+      where: { classScheduleId },
+      include: [
+        {
+          association: 'class',
+          include: [
+            {
+              association: 'studnets',
+              where: { isBan: false },
+              include: [{ association: 'statInfo' }],
+            },
+          ],
         },
       ],
     });

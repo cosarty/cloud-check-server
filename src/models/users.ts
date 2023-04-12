@@ -16,6 +16,7 @@ import {
 import uploadConf, { UploadConfType } from '@/config/upload.conf';
 import { Class } from './class';
 import { Department } from './department';
+import { StatInfo } from './statInfo';
 
 export type AuthType = 'student' | 'teacher' | 'admin';
 export type SexType = 0 | 1;
@@ -106,4 +107,8 @@ export class User extends Model<User> implements UserType {
   @AllowNull
   @Column
   face: boolean; // 是否录入人脸
+
+  // 获取签到记录
+  @HasOne(() => StatInfo, { foreignKey: 'statId' })
+  statInfo: StatInfo;
 }

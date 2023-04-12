@@ -14,8 +14,6 @@ import { ScheduleService } from '../schedule/schedule.service';
 import { User } from '@/common/decorator/user.decorator';
 import { Op } from 'sequelize';
 import * as dayjs from 'dayjs';
-
-
 @Controller('singTask')
 export class SingTaskController {
   constructor(
@@ -88,7 +86,14 @@ export class SingTaskController {
   @Auth()
   async getSingTask(
     @Body()
-    { isHistory = false, pageSize, pageCount, className, courseName }: any,
+    {
+      isHistory = false,
+      pageSize,
+      pageCount,
+      className,
+      courseName,
+      classScheduleId,
+    }: any,
     @User() user,
   ) {
     return await this.singTask.findAndCountAll({
@@ -98,11 +103,13 @@ export class SingTaskController {
       where: {
         isRun: false,
         isEnd: isHistory,
-        userId: user.userId,
+        ...(!classScheduleId ? { userId: user.userId } : {}),
+        ...(classScheduleId ? { classScheduleId } : {}),
         ...(isHistory ? {} : { taskTime: { [Op.gte]: new Date() } }),
       },
       include: [
         { association: 'area' },
+        { association: 'students' },
         {
           required: true,
           association: 'classSchedule',
@@ -111,6 +118,7 @@ export class SingTaskController {
               ? {}
               : {
                   isEnd: false,
+
                   starDate: {
                     [Op.lte]: new Date(),
                   },
@@ -147,7 +155,8 @@ export class SingTaskController {
   @Auth()
   async getCurrentTask(
     @User() user,
-    @Body() { pageSize, pageCount, className, courseName }: any,
+    @Body()
+    { pageSize, pageCount, className, courseName, classScheduleId }: any,
   ) {
     return await this.singTask.findAndCountAll({
       order: [['createdAt', 'DESC']],
@@ -155,40 +164,44 @@ export class SingTaskController {
       ...(pageCount ? { offset: Number((pageCount - 1) * pageSize) ?? 0 } : {}),
       where: {
         isEnd: false,
-        userId: user.userId,
+        ...(!classScheduleId ? { userId: user.userId } : {}),
         isRun: true,
+        ...(classScheduleId ? { classScheduleId } : {}),
       },
-      include: {
-        required: true,
-        association: 'classSchedule',
-        where: {
-          isEnd: false,
-          starDate: {
-            [Op.lte]: new Date(),
+      include: [
+        { association: 'students' },
+        {
+          required: true,
+          association: 'classSchedule',
+          where: {
+            isEnd: false,
+            starDate: {
+              [Op.lte]: new Date(),
+            },
+            endDate: {
+              [Op.gte]: new Date(),
+            },
           },
-          endDate: {
-            [Op.gte]: new Date(),
-          },
+          include: [
+            {
+              association: 'course',
+              where: {
+                ...(courseName
+                  ? { courseName: { [Op.substring]: courseName } }
+                  : {}),
+              },
+            },
+            {
+              association: 'class',
+              where: {
+                ...(className
+                  ? { className: { [Op.substring]: className } }
+                  : {}),
+              },
+            },
+          ],
         },
-        include: [
-          {
-            association: 'course',
-            where: {
-              ...(courseName
-                ? { courseName: { [Op.substring]: courseName } }
-                : {}),
-            },
-          },
-          {
-            association: 'class',
-            where: {
-              ...(className
-                ? { className: { [Op.substring]: className } }
-                : {}),
-            },
-          },
-        ],
-      },
+      ],
     });
   }
 

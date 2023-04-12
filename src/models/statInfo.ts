@@ -10,6 +10,7 @@ import {
 import { User } from '@/models/users';
 import { ClassSchedule } from './classSchedule';
 import { SingTask } from './singTask';
+import { UUIDV4 } from 'sequelize';
 
 export interface StatInfoType {
   statId: string;
@@ -21,7 +22,7 @@ export interface StatInfoType {
 }
 @Table({ tableName: 'stat_info', timestamps: true, paranoid: true })
 export class StatInfo extends Model<StatInfo> implements StatInfoType {
-  @Default(getId())
+  @Default(UUIDV4)
   @PrimaryKey
   @Column
   statId: string;

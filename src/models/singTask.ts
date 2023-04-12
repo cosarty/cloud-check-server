@@ -2,6 +2,7 @@ import {
   BelongsTo,
   Column,
   Default,
+  HasMany,
   Model,
   PrimaryKey,
   Table,
@@ -51,7 +52,7 @@ export class SingTask extends Model<SingTask> implements SingTaskType {
   @BelongsTo(() => Area, { foreignKey: 'areaId' })
   area: Area;
 
-  areaId:string
+  areaId: string;
   @Default(1)
   @Column
   sustain: number;
@@ -84,4 +85,8 @@ export class SingTask extends Model<SingTask> implements SingTaskType {
   @Default(false)
   @Column
   isFace: boolean; // 是否开启人脸
+
+  // 反向获取学生信息
+  @HasMany(() => SingTask, { foreignKey: 'userId', sourceKey: 'singTaskId' })
+  students: string;
 }

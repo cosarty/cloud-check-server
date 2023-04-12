@@ -79,7 +79,7 @@ export class ClassSchedule
   @BelongsTo(() => Course, { foreignKey: 'courseId' })
   course: Course;
 
-  @BelongsTo(() => Class)
-  class: Course;
+  @BelongsTo(() => Class, { foreignKey: 'classId' })
+  class: Class;
 
 }

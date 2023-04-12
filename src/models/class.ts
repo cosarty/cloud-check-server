@@ -4,7 +4,7 @@ import {
   BelongsToMany,
   Column,
   Default,
-  DefaultScope,
+  HasMany,
   IsInt,
   Model,
   PrimaryKey,
@@ -80,4 +80,8 @@ export class Class extends Model<Class> implements ClassType {
   departmentId?: string;
 
   teacherId?: string;
+
+  // 获取班级学生
+  @HasMany(() => User, { sourceKey: 'classId', foreignKey: 'classId' })
+  studnets: User;
 }
