@@ -98,6 +98,33 @@ export class ScheduleService {
     for (const sing of singTask) {
       this.singTaskCorn(sing.scheduleName, new Date(sing.taskTime));
     }
+
+    // 检查单次轮询
+    const timeoutTask = await this.singTask.findAll({
+      where: { isEnd: false, taskTime: { [Op.lte]: new Date() } },
+      include: {
+        association: 'classSchedule',
+        where: {
+          isEnd: false,
+          starDate: {
+            [Op.lte]: new Date(),
+          },
+          endDate: {
+            [Op.gte]: new Date(),
+          },
+        },
+      },
+    });
+
+    for (const timeout of timeoutTask) {
+      if (
+        dayjs(timeout.taskTime).add(timeout.integral, 'second').isAfter(dayjs())
+      ) {
+        const diff = dayjs(dayjs()).diff(dayjs(timeout.taskTime).add(timeout.integral, 'second') , 'second');
+        this.logger.log(`任务 ${timeout.scheduleName}----时间:${Math.abs(diff)}`);
+        this.addTimeout(timeout.scheduleName, Math.abs(diff));
+      }
+    }
   }
 
   // 添加轮询
@@ -182,7 +209,7 @@ export class ScheduleService {
       if (task) {
         // 关闭签到
         task.isEnd = true;
-        task.isRun = true;
+        task.isRun = false;
         await task.save();
       }
 
