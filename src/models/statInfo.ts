@@ -28,7 +28,9 @@ export class StatInfo extends Model<StatInfo> implements StatInfoType {
   statId: string;
 
   @BelongsTo(() => ClassSchedule, { foreignKey: 'classScheduleId' })
-  classSchedule: string;
+  classSchedule: ClassSchedule;
+
+  classScheduleId:string
   @BelongsTo(() => User, { foreignKey: 'userId' })
   user: string;
 
@@ -52,5 +54,9 @@ export class StatInfo extends Model<StatInfo> implements StatInfoType {
   @BelongsTo(() => SingTask, { foreignKey: 'singTaskId' })
   singTask: string;
 
-  singTaskId:string
+  singTaskId: string;
+
+  //  签到状态 0 迟到  1 已签到  null  未签到
+  @Column
+  type: number;
 }

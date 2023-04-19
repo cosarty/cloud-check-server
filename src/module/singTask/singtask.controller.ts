@@ -118,7 +118,6 @@ export class SingTaskController {
               ? {}
               : {
                   isEnd: false,
-
                   starDate: {
                     [Op.lte]: new Date(),
                   },
@@ -169,6 +168,7 @@ export class SingTaskController {
         ...(classScheduleId ? { classScheduleId } : {}),
       },
       include: [
+        { association: 'area' },
         { association: 'students' },
         {
           required: true,

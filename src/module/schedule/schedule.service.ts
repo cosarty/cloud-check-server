@@ -120,8 +120,13 @@ export class ScheduleService {
       if (
         dayjs(timeout.taskTime).add(timeout.integral, 'second').isAfter(dayjs())
       ) {
-        const diff = dayjs(dayjs()).diff(dayjs(timeout.taskTime).add(timeout.integral, 'second') , 'second');
-        this.logger.log(`任务 ${timeout.scheduleName}----时间:${Math.abs(diff)}`);
+        const diff = dayjs(dayjs()).diff(
+          dayjs(timeout.taskTime).add(timeout.integral, 'second'),
+          'second',
+        );
+        this.logger.log(
+          `任务 ${timeout.scheduleName}----时间:${Math.abs(diff)}`,
+        );
         this.addTimeout(timeout.scheduleName, Math.abs(diff));
       }
     }
@@ -270,9 +275,9 @@ export class ScheduleService {
 
   // 删除任务
   deleteCron(name: string) {
+    this.logger.warn(`任务 ${name} 终止!`);
     if (this.schedulerRegistry.doesExist('cron', name)) {
       this.schedulerRegistry.deleteCronJob(name);
-      this.logger.warn(`任务 ${name} 终止!`);
     }
   }
 }

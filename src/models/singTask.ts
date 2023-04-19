@@ -14,6 +14,7 @@ import { TimingTask } from './timing';
 import { Class } from './class';
 import { Department } from './department';
 import { Area } from './area';
+import { StatInfo } from './statInfo';
 
 export interface SingTaskType {
   singTaskId: string;
@@ -87,6 +88,6 @@ export class SingTask extends Model<SingTask> implements SingTaskType {
   isFace: boolean; // 是否开启人脸
 
   // 反向获取学生信息
-  @HasMany(() => SingTask, { foreignKey: 'userId', sourceKey: 'singTaskId' })
+  @HasMany(() => StatInfo, { foreignKey: 'singTaskId', sourceKey: 'singTaskId' })
   students: string;
 }
