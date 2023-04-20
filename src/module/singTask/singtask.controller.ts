@@ -253,4 +253,47 @@ export class SingTaskController {
 
     return { message: '更新成功' };
   }
+
+  // 获取某一天的签到
+  @Post('getCurrentDay')
+  async getCurrentDay(@Body() { date }) {
+    return await this.singTask.findAll({
+      order: [['isRun', 'DESC'],['createdAt', 'DESC'],],
+
+      where: {
+        // isEnd: false,
+        taskTime: {
+          [Op.and]: {
+            [Op.gte]: dayjs(date).startOf('day').toDate(),
+            [Op.lte]: dayjs(date).endOf('day').toDate(),
+          },
+        },
+      },
+      include: [
+        { association: 'area' },
+        { association: 'students' },
+        {
+          required: true,
+          association: 'classSchedule',
+          where: {
+            isEnd: false,
+            starDate: {
+              [Op.lte]: new Date(),
+            },
+            endDate: {
+              [Op.gte]: new Date(),
+            },
+          },
+          include: [
+            {
+              association: 'course',
+            },
+            {
+              association: 'class',
+            },
+          ],
+        },
+      ],
+    });
+  }
 }

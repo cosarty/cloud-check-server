@@ -3,9 +3,10 @@ import * as TeaUtil from '@alicloud/tea-util';
 import * as FacebodyClient from '@alicloud/facebody20191230';
 import * as fs from 'fs';
 import * as path from 'path';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { DetectFaceDto } from './dto/face.dto';
 import { Readable } from 'stream';
+import { ModelsEnum, PickModelType } from '@/models';
 @Injectable()
 export class DetectFaceService {
   private get client() {
@@ -19,6 +20,11 @@ export class DetectFaceService {
     config.endpoint = `facebody.cn-shanghai.aliyuncs.com`;
     return new FacebodyClient.default(config);
   }
+
+  constructor(
+    @Inject(ModelsEnum.User)
+    private readonly user: PickModelType<ModelsEnum.User>,
+  ) {}
 
   // 检测人脸
   async detectFaceClent(detect: DetectFaceDto) {
@@ -75,6 +81,8 @@ export class DetectFaceService {
       let runtime = new TeaUtil.RuntimeOptions({});
       await this.client.addFaceAdvance(requestBody, runtime);
       console.log('--------------------录入人脸样本成功--------------------');
+      // 将用户face字段改变
+      this.user.update({ face: true }, { where: { userId: entityId } });
     } catch (err) {
       console.log('add face entity error.');
       console.log(err.message);
