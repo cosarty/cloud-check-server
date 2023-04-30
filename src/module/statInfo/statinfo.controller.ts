@@ -43,6 +43,7 @@ export class StatInfoController {
   @Post('stat')
   @Auth()
   async stat(@Body() data) {
+    // console.log('data: ', data);
     // 获取总数
     const all = await this.singTask.findAll({
       order: [['createdAt', 'DESC']],
@@ -76,15 +77,6 @@ export class StatInfoController {
     });
     // console.log('all: ', all);
 
-    // 获取签到次数
-    const info = await this.statInfo.findAll({
-      attributes: ['type', [sequelize.fn('COUNT', '*'), 'count']],
-      where: {
-        classScheduleId: data.classScheduleId,
-        userId: data.userId,
-      },
-      group: ['type'],
-    });
 
     // 总积分
     const allintegral = await this.singTask.findOne({
@@ -119,6 +111,19 @@ export class StatInfoController {
         isEnd: true,
       },
     });
+
+        // 获取签到次数
+        const info = await this.statInfo.findAll({
+          attributes: ['type', [sequelize.fn('COUNT', '*'), 'count']],
+          where: {
+            classScheduleId: data.classScheduleId,
+            
+            ...(data.userId?{userId: data.userId}:{})
+          },
+          group: ['type'],
+        });
+    
+
     // 积分
     const integral = await this.statInfo.findAll({
       attributes: [
@@ -127,7 +132,7 @@ export class StatInfoController {
       ],
       where: {
         classScheduleId: data.classScheduleId,
-        userId: data.userId,
+        ...(data.userId?{userId: data.userId}:{})
       },
       include: [{ association: 'singTask', required: true, attributes: [] }],
       group: ['type'],

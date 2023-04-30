@@ -12,6 +12,7 @@ import {
   HasOne,
   BelongsTo,
   Scopes,
+  HasMany,
 } from 'sequelize-typescript';
 import uploadConf, { UploadConfType } from '@/config/upload.conf';
 import { Class } from './class';
@@ -109,6 +110,6 @@ export class User extends Model<User> implements UserType {
   face: boolean; // 是否录入人脸
 
   // 获取签到记录
-  @HasOne(() => StatInfo, { foreignKey: 'statId' })
+  @HasMany(() => StatInfo, { foreignKey: 'userId' })
   statInfo: StatInfo;
 }

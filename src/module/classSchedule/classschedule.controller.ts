@@ -172,7 +172,12 @@ export class ClassScheduleController {
             {
               association: 'studnets',
               where: { isBan: false },
-              include: [{ association: 'statInfo' }],
+              include: [
+                {
+                  association: 'statInfo',
+                  include: [{ association: 'singTask' }],
+                },
+              ],
             },
           ],
         },
