@@ -156,26 +156,20 @@ export class StatInfoController {
         classScheduleId: payload.classScheduleId,
       },
       include: {
-        required:false,
+        required: false,
         association: 'students',
         where: {
           userId: payload.userId,
         },
       },
     });
-    /**
-     * 
-     * 
-     */
-
     return data.reduce(
       (pre, nxt) => {
-
         if (!nxt.students.length) {
-          pre[3].push(nxt.toJSON());
-          return pre
+          pre[2].push(nxt.toJSON());
+          return pre;
         }
-        
+
         switch (nxt.students[0].type) {
           case 1:
             pre[1].push(nxt.toJSON());
@@ -184,13 +178,50 @@ export class StatInfoController {
             pre[0].push(nxt.toJSON());
             break;
           default:
-            pre[3].push(nxt.toJSON());
+            pre[2].push(nxt.toJSON());
             break;
         }
 
         return pre;
       },
-      { 1: [], 0: [], 3: [] },
+      { 1: [], 0: [], 2: [] },
+    );
+  }
+
+  // 查询某次签到
+  @Get('getSingStat')
+  async getSingStat(@Query() payload: any) {
+    const data = await this.singTask.findOne({
+      where: {
+        classScheduleId: payload.classScheduleId,
+        singTaskId: payload.singTaskId,
+      },
+      include: {
+        required: false,
+        association: 'students',
+        include: [{ association: 'user' }],
+      },
+    });
+
+    if (!data.students.length) return { 1: [], 0: [], 2: [] };
+
+    return data.students.reduce(
+      (pre, nxt) => {
+        switch (nxt.type) {
+          case 1:
+            pre[1].push(nxt.toJSON());
+            break;
+          case 0:
+            pre[0].push(nxt.toJSON());
+            break;
+          default:
+            pre[2].push(nxt.toJSON());
+            break;
+        }
+
+        return pre;
+      },
+      { 1: [], 0: [], 2: [] },
     );
   }
 }
