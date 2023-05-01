@@ -1,7 +1,7 @@
 import { User } from '@/common/decorator/user.decorator';
 import { Auth } from '@/common/role/auth.decorator';
 import { ModelsEnum, PickModelType } from '@/models';
-import { Body, Controller, Inject, Post } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, Query } from '@nestjs/common';
 import sequelize from 'sequelize';
 import { Op } from 'sequelize';
 
@@ -77,7 +77,6 @@ export class StatInfoController {
     });
     // console.log('all: ', all);
 
-
     // 总积分
     const allintegral = await this.singTask.findOne({
       order: [['createdAt', 'DESC']],
@@ -112,27 +111,26 @@ export class StatInfoController {
       },
     });
 
-        // 获取签到次数
-        const info = await this.statInfo.findAll({
-          attributes: ['type', [sequelize.fn('COUNT', '*'), 'count']],
-          where: {
-            classScheduleId: data.classScheduleId,
-            
-            ...(data.userId?{userId: data.userId}:{})
-          },
-          group: ['type'],
-        });
-    
+    // 获取签到次数
+    const info = await this.statInfo.findAll({
+      attributes: ['type', [sequelize.fn('COUNT', '*'), 'count']],
+      where: {
+        classScheduleId: data.classScheduleId,
+
+        ...(data.userId ? { userId: data.userId } : {}),
+      },
+      group: ['type'],
+    });
 
     // 积分
     const integral = await this.statInfo.findAll({
       attributes: [
         'type',
-        [sequelize.fn('SUM', sequelize.col('singTask.sustain')), 'aaa'],
+        [sequelize.fn('SUM', sequelize.col('singTask.sustain')), 'sustains'],
       ],
       where: {
         classScheduleId: data.classScheduleId,
-        ...(data.userId?{userId: data.userId}:{})
+        ...(data.userId ? { userId: data.userId } : {}),
       },
       include: [{ association: 'singTask', required: true, attributes: [] }],
       group: ['type'],
@@ -148,5 +146,51 @@ export class StatInfoController {
       integral,
       allintegral,
     };
+  }
+
+  // 获取某一个学生的签到信息
+  @Get('getSduentStat')
+  async getSduentStat(@Query() payload: any) {
+    const data = await this.singTask.findAll({
+      where: {
+        classScheduleId: payload.classScheduleId,
+      },
+      include: {
+        required:false,
+        association: 'students',
+        where: {
+          userId: payload.userId,
+        },
+      },
+    });
+    /**
+     * 
+     * 
+     */
+
+    return data.reduce(
+      (pre, nxt) => {
+
+        if (!nxt.students.length) {
+          pre[3].push(nxt.toJSON());
+          return pre
+        }
+        
+        switch (nxt.students[0].type) {
+          case 1:
+            pre[1].push(nxt.toJSON());
+            break;
+          case 0:
+            pre[0].push(nxt.toJSON());
+            break;
+          default:
+            pre[3].push(nxt.toJSON());
+            break;
+        }
+
+        return pre;
+      },
+      { 1: [], 0: [], 3: [] },
+    );
   }
 }

@@ -87,7 +87,12 @@ export class SingTask extends Model<SingTask> implements SingTaskType {
   @Column
   isFace: boolean; // 是否开启人脸
 
+
+
   // 反向获取学生信息
-  @HasMany(() => StatInfo, { foreignKey: 'singTaskId', sourceKey: 'singTaskId' })
-  students: string;
+  @HasMany(() => StatInfo, {
+    foreignKey: 'singTaskId',
+    sourceKey: 'singTaskId',
+  })
+  students: StatInfo[];
 }
