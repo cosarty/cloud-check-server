@@ -43,6 +43,7 @@ export class ClassScheduleController {
           where: {
             userId: user.userId,
           },
+          include:[{association:'user'}],
           through: {
             where: {
               isEnd: false,

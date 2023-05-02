@@ -195,7 +195,7 @@ export class StatInfoController {
   // 查询某次签到
   @Get('getSingStat')
   async getSingStat(@Query() payload: any) {
-    console.log('payload: ', payload);
+
 
     const data = await this.classSchdule.findOne({
       include: {

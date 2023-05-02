@@ -101,9 +101,17 @@ export class User extends Model<User> implements UserType {
     targetKey: 'departmentId',
     foreignKey: 'departmentId',
   })
-  department: string;
+  department: Department;
 
   departmentId?: string;
+
+  @HasMany(() => Class, {
+    sourceKey: 'userId',
+    foreignKey: 'teacherId',
+  })
+  instructor: Class;
+
+  instructorId?: string;
 
   @AllowNull
   @Column
