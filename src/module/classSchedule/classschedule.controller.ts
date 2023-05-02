@@ -43,7 +43,7 @@ export class ClassScheduleController {
           where: {
             userId: user.userId,
           },
-          include:[{association:'user'}],
+          include: [{ association: 'user' }],
           through: {
             where: {
               isEnd: false,
@@ -164,6 +164,7 @@ export class ClassScheduleController {
   // 获取课程学生按照 积分排名
   @Get('getSchduleStudents/:classScheduleId')
   async getSchduleStudents(@Param() { classScheduleId }: any) {
+
     return await this.classSchedule.findOne({
       where: { classScheduleId },
       include: [
@@ -176,7 +177,9 @@ export class ClassScheduleController {
               include: [
                 {
                   association: 'statInfo',
-                  include: [{ association: 'singTask' }],
+                  include: [
+                    { association: 'singTask', where: { classScheduleId } },
+                  ],
                 },
               ],
             },

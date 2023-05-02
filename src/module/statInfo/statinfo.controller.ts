@@ -47,7 +47,7 @@ export class StatInfoController {
   @Post('stat')
   @Auth()
   async stat(@Body() data) {
-    // console.log('data: ', data);
+    console.log('data: ', data);
     // 获取总数
     const all = await this.singTask.findAll({
       order: [['createdAt', 'DESC']],
@@ -119,10 +119,17 @@ export class StatInfoController {
     const info = await this.statInfo.findAll({
       attributes: ['type', [sequelize.fn('COUNT', '*'), 'count']],
       where: {
-        classScheduleId: data.classScheduleId,
-
         ...(data.userId ? { userId: data.userId } : {}),
       },
+      include: [
+        {
+          association: 'singTask',
+          required: true,
+          where: {
+            classScheduleId: data.classScheduleId,
+          },
+        },
+      ],
       group: ['type'],
     });
 
@@ -133,10 +140,17 @@ export class StatInfoController {
         [sequelize.fn('SUM', sequelize.col('singTask.sustain')), 'sustains'],
       ],
       where: {
-        classScheduleId: data.classScheduleId,
         ...(data.userId ? { userId: data.userId } : {}),
       },
-      include: [{ association: 'singTask', required: true, attributes: [] }],
+      include: [
+        {
+          association: 'singTask',
+          required: true,
+          where: {
+            classScheduleId: data.classScheduleId,
+          },
+        },
+      ],
       group: ['type'],
     });
 
@@ -195,8 +209,6 @@ export class StatInfoController {
   // 查询某次签到
   @Get('getSingStat')
   async getSingStat(@Query() payload: any) {
-
-
     const data = await this.classSchdule.findOne({
       include: {
         required: true,

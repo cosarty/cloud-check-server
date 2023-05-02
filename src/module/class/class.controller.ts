@@ -131,11 +131,19 @@ export class ClassController {
           ? { userName: { [Op.substring]: pram.userName } }
           : {}),
       },
+      include: [
+        {
+          association: 'statInfo',
+          include: [{ association: 'singTask' }],
+        },
+      ],
       attributes: {
         exclude: ['classId', 'super', 'isAdmin', 'isBan'],
       },
-      limit: Number(pram.pageSize),
-      offset: Number((pram.pageCount - 1) * pram.pageSize),
+      ...(pram.pageSize ? { limit: Number(pram.pageSize) } : {}),
+      ...(pram.pageCount
+        ? { offset: Number((pram.pageCount - 1) * pram.pageSize) }
+        : {}),
     });
     return users;
   }
