@@ -224,4 +224,49 @@ export class StatInfoController {
       { 1: [], 0: [], 2: [] },
     );
   }
+
+  @Post('setStatType')
+  async setStatType(@Body() payload: any) {
+    console.log('payload: ', payload);
+
+    // 设置状态的时候要判断  是否存在其签到记录
+    // 如果不存在 就添加一条
+    // 存在的话就更改
+
+    if (!payload.statId) {
+      // 签到
+      await this.statInfo.create(
+        {
+          type: payload.action === 2 ? null : payload.action,
+          statTime: new Date(),
+          userId: payload.userId,
+          singTaskId: payload.singTaskId,
+          classScheduleId: payload.classScheduleId,
+        },
+        {
+          fields: [
+            'userId',
+            'statTime',
+            'location',
+            'locationName',
+            'singTaskId',
+            'classScheduleId',
+            'type',
+            'sustain',
+            'tagetScope',
+          ],
+        },
+      );
+
+      return { message: '设置成功！！' };
+    }
+
+    const stat = await this.statInfo.findByPk(payload.statId);
+
+    stat.type = payload.action === 2 ? null : payload.action;
+
+    await stat.save();
+
+    return { message: '设置成功！！' };
+  }
 }
