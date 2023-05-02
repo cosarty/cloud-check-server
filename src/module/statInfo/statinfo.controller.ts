@@ -12,6 +12,10 @@ export class StatInfoController {
     private readonly statInfo: PickModelType<ModelsEnum.StatInfo>,
     @Inject(ModelsEnum.SingTask)
     private readonly singTask: PickModelType<ModelsEnum.SingTask>,
+    @Inject(ModelsEnum.Class)
+    private readonly classModel: PickModelType<ModelsEnum.Class>,
+    @Inject(ModelsEnum.ClassSchedule)
+    private readonly classSchdule: PickModelType<ModelsEnum.ClassSchedule>,
   ) {}
 
   // 签到
@@ -191,23 +195,37 @@ export class StatInfoController {
   // 查询某次签到
   @Get('getSingStat')
   async getSingStat(@Query() payload: any) {
-    const data = await this.singTask.findOne({
-      where: {
-        classScheduleId: payload.classScheduleId,
-        singTaskId: payload.singTaskId,
-      },
+    console.log('payload: ', payload);
+
+    const data = await this.classSchdule.findOne({
       include: {
-        required: false,
-        association: 'students',
-        include: [{ association: 'user' }],
+        required: true,
+        association: 'class',
+        include: [
+          {
+            required: false,
+            association: 'studnets',
+            include: [
+              {
+                required: false,
+                association: 'statInfo',
+                where: {
+                  singTaskId: payload.singTaskId,
+                },
+              },
+            ],
+          },
+        ],
       },
     });
 
-    if (!data.students.length) return { 1: [], 0: [], 2: [] };
+    const student = data.class.studnets;
 
-    return data.students.reduce(
+    if (!student.length) return { 1: [], 0: [], 2: [] };
+
+    return student.reduce(
       (pre, nxt) => {
-        switch (nxt.type) {
+        switch (nxt.statInfo[0]?.type) {
           case 1:
             pre[1].push(nxt.toJSON());
             break;
@@ -225,10 +243,9 @@ export class StatInfoController {
     );
   }
 
+  // 设置签到状态
   @Post('setStatType')
   async setStatType(@Body() payload: any) {
-    console.log('payload: ', payload);
-
     // 设置状态的时候要判断  是否存在其签到记录
     // 如果不存在 就添加一条
     // 存在的话就更改

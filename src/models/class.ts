@@ -83,5 +83,5 @@ export class Class extends Model<Class> implements ClassType {
 
   // 获取班级学生
   @HasMany(() => User, { sourceKey: 'classId', foreignKey: 'classId' })
-  studnets: User;
+  studnets: User[];
 }
