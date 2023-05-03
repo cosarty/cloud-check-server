@@ -56,6 +56,7 @@ export class ClassService {
     className,
     teacher,
     createdAt,
+    userId,
   }) {
     return await this.classModel.findAndCountAll({
       order: [['createdAt', createdAt || 'DESC']],
@@ -75,6 +76,9 @@ export class ClassService {
         },
         {
           association: 'department',
+          where: {
+            ...(userId ? { userId } : {}),
+          },
         },
       ],
     });

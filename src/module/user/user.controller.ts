@@ -130,7 +130,7 @@ export class UserController {
 
   // 获取老师列表
   @Get('getTeacher')
-  @Auth(['super', 'admin'])
+  @Auth()
   async getTeacher(@Query() pram: any) {
     return await this.user.scope('hidePassword').findAndCountAll({
       order: [['createdAt', 'DESC']],
@@ -156,7 +156,7 @@ export class UserController {
 
   // 获取学生列表
   @Get('getstudent')
-  @Auth(['super', 'admin'])
+  @Auth()
   async getStudent(@Query() pram: any) {
     return await this.user.scope('hidePassword').findAndCountAll({
       order: [['createdAt', 'DESC']],

@@ -36,9 +36,13 @@ export class DepartmentController {
   }
 
   @Get('get')
-  @Super()
-  async getDepartment() {
-    const data = await this.department.findAll({ include: ['user'] });
+  @Auth()
+  async getDepartment(@User() user) {
+
+    const data = await this.department.findAll({
+      where: {
+      ...(user.super?{}:{userId:user.userId})
+    }, include: ['user'] });
 
     return data;
   }

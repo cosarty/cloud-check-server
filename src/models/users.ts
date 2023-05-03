@@ -105,11 +105,17 @@ export class User extends Model<User> implements UserType {
 
   departmentId?: string;
 
+  @HasMany(() => Department, {
+    sourceKey: 'userId',
+    foreignKey: 'userId',
+  })
+  myDepartment: Department[];
+
   @HasMany(() => Class, {
     sourceKey: 'userId',
     foreignKey: 'teacherId',
   })
-  instructor: Class;
+  instructor: Class[];
 
   instructorId?: string;
 

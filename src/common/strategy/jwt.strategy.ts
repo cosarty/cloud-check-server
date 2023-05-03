@@ -43,6 +43,9 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
           association: 'department',
         },
         {
+          association: 'myDepartment',
+        },
+        {
           association: 'instructor',
         },
       ],

@@ -24,9 +24,9 @@ import {
   GetClassDto,
   UpdateClassDto,
 } from './dto/update-class.dto';
-import { Op } from 'sequelize';
+import { Op, Sequelize, where } from 'sequelize';
 import { ClassscheduleService } from '../classSchedule/classschedule.service';
-
+import * as loadsh from 'lodash';
 /**
  * // TODO 统计班级签到信息
  */
@@ -40,6 +40,10 @@ export class ClassController {
     private readonly classModel: PickModelType<ModelsEnum.Class>,
     @Inject(ModelsEnum.User)
     private readonly user: PickModelType<ModelsEnum.User>,
+    @Inject(ModelsEnum.StatInfo)
+    private readonly statInfo: PickModelType<ModelsEnum.StatInfo>,
+    @Inject(ModelsEnum.SingTask)
+    private readonly singTask: PickModelType<ModelsEnum.SingTask>,
     @Inject(ModelsEnum.ClassSchedule)
     private readonly classSchedule: PickModelType<ModelsEnum.ClassSchedule>,
     private readonly classSchduelServe: ClassscheduleService,
@@ -163,5 +167,90 @@ export class ClassController {
   async getClassList(@Query() pram: any) {
     const data = await this.classService.getClassList(pram);
     return data;
+  }
+
+  // 获取课程班级统计
+  @Get('getClassStat/:classId')
+  async getSchduleStudents(
+    @Param() { classId }: any,
+    @Query() { userId }: any,
+  ) {
+    // console.log('classId: ', classId);
+    // console.log('userId: ', userId);
+
+    const sc = await this.user.count({
+      where: {
+        classId,
+      },
+    });
+
+    const info = await this.classSchedule.findAll({
+      where: {
+        classId,
+        isEnd: false,
+      },
+      include: [
+        {
+          association: 'course',
+        },
+        {
+          association: 'singTask',
+          include: [
+            {
+              association: 'students',
+              required: false,
+              where: {
+                ...(userId ? { userId } : {}),
+              },
+            },
+          ],
+        },
+      ],
+    });
+
+    const cpi = info.map((i) => {
+      return i.singTask.reduce(
+        (pre: any, nxt) => {
+          if (userId) {
+            if (
+              nxt.students?.[0]?.type !== undefined &&
+              pre.students?.[0]?.type !== null
+            ) {
+              pre[nxt.students[0]?.type ?? 0] += 1;
+            } else {
+              pre[2] += 1;
+            }
+          } else {
+            pre[2] +=
+              sc -
+              nxt.students.filter(
+                (s) => s.type !== undefined && s.type !== null,
+              ).length;
+            pre[0] += sc - nxt.students.filter((s) => s.type === 0).length;
+            pre[1] += sc - nxt.students.filter((s) => s.type === 1).length;
+          }
+
+          return pre;
+        },
+        [0, 0, 0],
+      );
+    });
+
+    return {
+      value: loadsh.zip(...cpi),
+      name: info.map((i) => i.course.courseName),
+    };
+  }
+
+  // 获取我管理的班级
+  @Get('getInstructor')
+  @Auth()
+  async getInstructor(@User() user) {
+    return await this.classModel.findAll({
+      where: {
+        teacherId: user.userId,
+      },
+      include: [{ association: 'teacher' }],
+    });
   }
 }

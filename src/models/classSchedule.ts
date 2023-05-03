@@ -16,6 +16,7 @@ import {
 import { Class } from './class';
 import { ClassHours } from './classHours';
 import { Course } from './course';
+import { SingTask } from './singTask';
 
 export interface ClassScheduleType {
   classScheduleId: string;
@@ -82,4 +83,6 @@ export class ClassSchedule
   @BelongsTo(() => Class, { foreignKey: 'classId' })
   class: Class;
 
+  @HasMany(() => SingTask, {sourceKey:'classScheduleId', foreignKey: 'classScheduleId' })
+  singTask: SingTask[];
 }
