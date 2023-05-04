@@ -46,7 +46,6 @@ export class ClassScheduleController {
           include: [{ association: 'user' }],
           through: {
             where: {
-              isEnd: false,
               starDate: {
                 [Op.lte]: new Date(),
               },
@@ -164,7 +163,6 @@ export class ClassScheduleController {
   // 获取课程学生按照 积分排名
   @Get('getSchduleStudents/:classScheduleId')
   async getSchduleStudents(@Param() { classScheduleId }: any) {
-
     return await this.classSchedule.findOne({
       where: { classScheduleId },
       include: [
@@ -188,5 +186,10 @@ export class ClassScheduleController {
       ],
     });
   }
-   
+  @Get('endCourse/:classScheduleId')
+  async endCourse(@Param() { classScheduleId }: any) {
+    await this.classScheduleServe.endCourse(classScheduleId);
+    return { message: '结课成功!!' };
+  }
+
 }

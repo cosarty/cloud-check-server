@@ -28,6 +28,18 @@ export class ClassscheduleService {
       this.schedule.deleteCron(sin.scheduleName);
       await sin.destroy();
     }
+    this.schedule.deleteCron(classScheduleId);
     await this.classSchedule.destroy({ where: { classScheduleId } });
+  }
+
+  // 停止课程
+  async endCourse(classScheduleId: string) {
+    // 停止定时器
+    this.schedule.deleteCron(classScheduleId);
+    // 设置状态
+    await this.classSchedule.update(
+      { isEnd: true },
+      { where: { classScheduleId } },
+    );
   }
 }

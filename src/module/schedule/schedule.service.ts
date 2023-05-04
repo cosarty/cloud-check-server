@@ -130,6 +130,20 @@ export class ScheduleService {
         this.addTimeout(timeout.scheduleName, Math.abs(diff));
       }
     }
+
+    // 课程定时器
+    const schduleTask = await this.classSchdule.findAll({
+      where: {
+        isEnd: false,
+        endDate: {
+          [Op.gte]: new Date(),
+        },
+      },
+    });
+
+    for (const s of schduleTask) {
+      await this.schduleTaskCorn(s.classScheduleId, dayjs(s.endDate).toDate());
+    }
   }
 
   // 添加轮询
@@ -279,5 +293,23 @@ export class ScheduleService {
     if (this.schedulerRegistry.doesExist('cron', name)) {
       this.schedulerRegistry.deleteCronJob(name);
     }
+  }
+
+  // 课程时间的单次的任务
+  async schduleTaskCorn(name: string, date: Date) {
+    this.logger.debug(
+      `启动 课程任务 ${name}----（${dayjs(date).format('YYYY-MM-DD hh:mm')}）`,
+    );
+    const job = new CronJob(date, async () => {
+      await this.classSchdule.update(
+        { isEnd: true },
+        {
+          where: {
+            classScheduleId: name,
+          },
+        },
+      );
+    });
+    job.start();
   }
 }
