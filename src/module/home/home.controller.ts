@@ -2,12 +2,13 @@
 https://docs.nestjs.com/controllers#controllers
 */
 
+import { User } from '@/common/decorator/user.decorator';
 import { Auth } from '@/common/role/auth.decorator';
 import { ModelsEnum, PickModelType } from '@/models';
 import { Controller, Get, Inject } from '@nestjs/common';
 import { includes } from 'lodash';
 import { Op, Sequelize } from 'sequelize';
-
+import * as loadsh from 'lodash';
 @Controller('home')
 export class HomeController {
   constructor(
@@ -21,10 +22,12 @@ export class HomeController {
     private readonly singTask: PickModelType<ModelsEnum.SingTask>,
     @Inject(ModelsEnum.Course)
     private readonly course: PickModelType<ModelsEnum.Course>,
-    @Inject(ModelsEnum.ClassSchedule)
-    private readonly department: PickModelType<ModelsEnum.Department>,
-    @Inject(ModelsEnum.Course)
     @Inject(ModelsEnum.Department)
+    private readonly department: PickModelType<ModelsEnum.Department>,
+    @Inject(ModelsEnum.TimingTask)
+    private readonly timing: PickModelType<ModelsEnum.TimingTask>,
+
+    @Inject(ModelsEnum.ClassSchedule)
     private readonly classSchedule: PickModelType<ModelsEnum.ClassSchedule>,
   ) {}
 
@@ -32,21 +35,21 @@ export class HomeController {
   @Auth(['super', 'admin'])
   async Admin() {
     // 整个系统的课程总数
-    const course =await this.course.count();
+    const course = await this.course.count();
     // 整个系统的版班级总数
-    const classNum =await this.classModel.count();
+    const classNum = await this.classModel.count();
 
     // 整个系统的系别总数
-    const department =await this.department.count();
+    const department = await this.department.count();
 
     // 整个系统的老师总数
-    const teacherCount =await this.user.count({
+    const teacherCount = await this.user.count({
       where: {
         auth: 'teacher',
       },
     });
     // 整个学生的老师总数
-    const studentCount =await this.user.count({
+    const studentCount = await this.user.count({
       where: {
         auth: 'student',
       },
@@ -226,8 +229,7 @@ export class HomeController {
       })
       .sort((a, b) => b.ratio - a.ratio)
       .slice(0, 6);
-    
-  
+
     return {
       course,
       classNum,
@@ -238,5 +240,213 @@ export class HomeController {
       schduleRatio,
       teacherRatio,
     };
+  }
+
+  @Get('teacher')
+  @Auth(['teacher'])
+  async teacher(@User() user) {
+    // 课程数
+    const course = await this.course.count({ where: { userId: user.userId } });
+
+    // 授课班级数
+
+    const classNum = await this.classModel.count({
+      include: [
+        {
+          required: true,
+          association: 'course',
+          where: {
+            userId: user.userId,
+          },
+        },
+      ],
+    });
+
+    // 定时任务数
+    const singTaskNum = await this.singTask.count({
+      where: {
+        userId: user.userId,
+        isEnd: false,
+      },
+    });
+
+    // 轮询任务数
+    const timingNum = await this.timing.count({
+      where: {
+        userId: user.userId,
+        isEnd: false,
+      },
+    });
+    // 课程排行榜
+
+    // 课程的受欢迎程度
+    // 签到率=已签到次数/ 签到数*学生数
+    const schduleInfo = await this.course.findAll({
+      where: {
+        userId: user.userId,
+      },
+      include: [
+        {
+          association: 'user',
+        },
+        {
+          required: true,
+          association: 'classSchedule',
+          include: [
+            {
+              association: 'class',
+              include: [{ association: 'studnets' }],
+            },
+            {
+              association: 'singTask',
+              include: [
+                {
+                  association: 'students',
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+
+    const schduleRatio = schduleInfo
+      .map((p) => {
+        const { singNum, stuNum } = p.classSchedule.reduce(
+          (s, cl) => {
+            // 班级人数
+            const classNum = cl.class.studnets.length;
+            // 总签到次数
+            const singNum = cl.singTask.length * classNum;
+            // 学生签到的次数
+            const stuNum = cl.singTask.reduce((d, si) => {
+              return d + si.students.filter((st) => st.type === 1).length;
+            }, 0);
+            s['singNum'] = s['singNum'] + singNum;
+            s['stuNum'] = s['stuNum'] + stuNum;
+
+            return s;
+          },
+          { singNum: 0, stuNum: 0 },
+        );
+        return {
+          name: p.courseName,
+          comment: p.user.userName,
+          ratio: stuNum / (singNum ?? 0),
+        };
+      })
+      .sort((a, b) => b.ratio - a.ratio)
+      .slice(0, 6);
+
+    // 课程签到图
+
+    // const sc = await this.user.count({
+    //   where: {
+    //     classId,
+    //   },
+    // });
+
+    const info = await this.classSchedule.findAll({
+      where: {
+        isEnd: false,
+      },
+      include: [
+        {
+          association: 'class',
+          include: [
+            {
+              association: 'studnets',
+            },
+          ],
+        },
+        {
+          association: 'course',
+          where: {
+            userId: user.userId,
+          },
+        },
+        {
+          association: 'singTask',
+          include: [
+            {
+              association: 'students',
+              required: false,
+            },
+          ],
+        },
+      ],
+    });
+
+    const cpi = info.map((i) => {
+      return i.singTask.reduce(
+        (pre: any, nxt) => {
+          pre[2] +=
+            i.class.studnets.length -
+            nxt.students.filter((s) => s.type !== undefined && s.type !== null)
+              .length;
+          pre[0] +=
+            i.class.studnets.length -
+            nxt.students.filter((s) => s.type === 0).length;
+          pre[1] +=
+            i.class.studnets.length -
+            nxt.students.filter((s) => s.type === 1).length;
+
+          return pre;
+        },
+        [0, 0, 0],
+      );
+    });
+
+    const statInfo = {
+      value: loadsh.zip(...cpi),
+      name: info.map((i) => i.course.courseName + `(${i.class.className})`),
+    };
+
+    return {
+      course,
+      classNum,
+      singTaskNum,
+      timingNum,
+      schduleRatio,
+      statInfo,
+    };
+  }
+
+  @Get('student')
+  @Auth(['student'])
+  async Stuudent(@User() user) {
+    //  总签到数
+
+    const singPass = await this.statInfo.count({
+      where: { userId: user.userId, type: 1 },
+    });
+    // 缺勤数
+    let singDuty = 0;
+
+    if (user.classId) {
+      const all = await this.statInfo.count({ where: { userId: user.userId } });
+      const classTask = await this.classSchedule.findAll({
+        where: {
+          classId: user.classId,
+        },
+        include: {
+          association: 'singTask',
+        },
+      });
+      const duty = classTask.reduce((pre, nxt) => pre + nxt.singTask.length, 0);
+      singDuty = duty - all;
+    }
+
+    // 迟到数
+    const singLate = await this.statInfo.count({
+      where: { userId: user.userId, type: 0 },
+    });
+
+    // 课程数
+    const schduleNum = await this.classSchedule.count({
+      where: { classId: user.classId, isEnd: false },
+    });
+
+    return { singPass, singLate, singDuty, schduleNum };
   }
 }

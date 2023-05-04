@@ -27,9 +27,7 @@ import {
 import { Op, Sequelize, where } from 'sequelize';
 import { ClassscheduleService } from '../classSchedule/classschedule.service';
 import * as loadsh from 'lodash';
-/**
- * // TODO 统计班级签到信息
- */
+
 
 @Controller('class')
 @Auth()
