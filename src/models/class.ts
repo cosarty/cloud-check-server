@@ -76,6 +76,8 @@ export class Class extends Model<Class> implements ClassType {
 
   @BelongsToMany(() => Course, () => ClassSchedule)
   course: Course;
+  @HasMany(() => ClassSchedule, { sourceKey: 'classId', foreignKey: 'classId' })
+  classSchedule: ClassSchedule[];
 
   departmentId?: string;
 

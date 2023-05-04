@@ -18,6 +18,8 @@ import uploadConf, { UploadConfType } from '@/config/upload.conf';
 import { Class } from './class';
 import { Department } from './department';
 import { StatInfo } from './statInfo';
+import { ClassSchedule } from './classSchedule';
+import { Course } from './course';
 
 export type AuthType = 'student' | 'teacher' | 'admin';
 export type SexType = 0 | 1;
@@ -125,5 +127,8 @@ export class User extends Model<User> implements UserType {
 
   // 获取签到记录
   @HasMany(() => StatInfo, { foreignKey: 'userId' })
-  statInfo: StatInfo;
+  statInfo: StatInfo[];
+  // 获取签到记录
+  @HasMany(() => Course, { foreignKey: 'userId' })
+  course: Course[];
 }

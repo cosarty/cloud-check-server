@@ -3,13 +3,15 @@ import {
   BelongsToMany,
   Column,
   Default,
+  HasOne,
   Model,
   PrimaryKey,
   Table,
+  HasMany
 } from 'sequelize-typescript';
 import { User } from './users';
-import { getId } from '@/util/utils';
-import { UUID, UUIDV4 } from 'sequelize';
+
+import {  UUIDV4 } from 'sequelize';
 import uploadConf from '@/config/upload.conf';
 import { Class } from './class';
 import { ClassSchedule } from './classSchedule';
@@ -52,6 +54,12 @@ export class Course extends Model<Course> implements CourseType {
 
   @BelongsToMany(() => Class, () => ClassSchedule)
   class: Class;
+
+  @HasMany(() => ClassSchedule, {
+    foreignKey: 'courseId',
+    sourceKey:'courseId'
+  })
+  classSchedule: ClassSchedule[];
 
   @Column
   comment: string;
