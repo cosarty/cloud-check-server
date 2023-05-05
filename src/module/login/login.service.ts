@@ -99,12 +99,14 @@ export class LoginService {
     );
   }
   // 判断一下邮件是否可以发送
-  async verifySendMall(email: string) {
+  async verifySendMall(email: string, type: string) {
     /**
      * 用户不存在或者 邮件未过期
      */
     const user = await this.user.findOne({ where: { email } });
-    if (user) throw new MyException({ code: '400', error: '用户已注册' });
+
+    if (user && type === 'register')
+      throw new MyException({ code: '400', error: '用户已注册' });
     const aut = await this.authCode.findOne({
       order: [['createdAt', 'DESC']],
       where: {
@@ -112,6 +114,8 @@ export class LoginService {
         expireTime: { [Op.gt]: new Date() },
       },
     });
+
+
     if (aut) {
       throw new MyException({
         code: '400',
@@ -151,20 +155,19 @@ export class LoginService {
     cb: (payload: unknown) => any,
   ) {
     const checkSuccess = (info: any) => info.response.includes('250');
-    switch (type) {
-      case 'register':
-        // 判断是否可以发送邮件
-        await this.verifySendMall(email);
-        const captcha = await this.getCaptcha(email);
-        const isSuccess = checkSuccess(await cb({ captcha }));
-        if (!isSuccess) return isSuccess;
-        // 保存到数据库
-        const res = await this.authCode.create({
-          email,
-          captcha,
-          expireTime: dayjs().add(1, 'minute').toDate(),
-        });
-        return !!res;
-    }
+    // 判断是否可以发送邮件
+    await this.verifySendMall(email, type);
+
+    const captcha = await this.getCaptcha(email);
+
+    const isSuccess = checkSuccess(await cb({ captcha }));
+    if (!isSuccess) return isSuccess;
+    // 保存到数据库
+    const res = await this.authCode.create({
+      email,
+      captcha,
+      expireTime: dayjs().add(1, 'minute').toDate(),
+    });
+    return !!res;
   }
 }
