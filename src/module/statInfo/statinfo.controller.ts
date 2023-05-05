@@ -47,7 +47,7 @@ export class StatInfoController {
   @Post('stat')
   @Auth()
   async stat(@Body() data) {
-    console.log('data: ', data);
+    // console.log('data: ', data);
     // 获取总数
     const all = await this.singTask.findAll({
       order: [['createdAt', 'DESC']],

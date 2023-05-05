@@ -52,14 +52,26 @@ export class LoginController {
   // 邮件发送
   @Post('sendMail')
   async sendMail(@Body() { email, type }: SendMailDto) {
-    const isSuccess = await this.loginService.sendMail({
-      email,
-      subject: '注册邀请',
-      type,
-    });
-    if (!isSuccess)
+    try {
+      const isSuccess = await this.loginService.sendMail({
+        email,
+        subject: type === 'register' ? '注册邀请' : '找回密码',
+        type,
+      });
+      if (!isSuccess)
+        throw new MyException({ error: '服务器错误，发送失败', code: '400' });
+      return { message: '发送成功' };
+    } catch (error: any) {
+      // console.log('error: ', error);
+      if (error.message.includes('550')) {
+        throw new MyException({ error: '邮箱不存在', code: '400' });
+      }
+
+      if (error.response?.error) {
+        throw new MyException({ error: error.response?.error, code: '400' });
+      }
       throw new MyException({ error: '服务器错误，发送失败', code: '400' });
-    return { message: '发送成功' };
+    }
     // this.sendMail();
   }
 

@@ -1,4 +1,4 @@
-import { UpdateEmailDto } from './dto/user.dto';
+import { ForgetPassword, UpdateEmailDto } from './dto/user.dto';
 
 import { User } from '@/common/decorator/user.decorator';
 import { Auth, Super } from '@/common/role/auth.decorator';
@@ -190,5 +190,17 @@ export class UserController {
       { where: { userId: payload.userId } },
     );
     return { message: payload.isAdmin ? '设置成功' : '取消成功' };
+  }
+
+  @Post('updateForgetPassword')
+  async updateForgetPassword(@Body() payload: ForgetPassword) {
+    const hash = await argon2.hash(payload.password, {
+      type: argon2.argon2d,
+    });
+    await this.user.update(
+      { password: hash },
+      { where: { email: payload.email } },
+    );
+    return { message: '密码重置成功' };
   }
 }

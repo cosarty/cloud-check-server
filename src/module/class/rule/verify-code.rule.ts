@@ -10,10 +10,14 @@ import {
 @ValidatorConstraint()
 export class VrifyCodeRule implements ValidatorConstraintInterface {
   async validate(value: number, args: ValidationArguments) {
+
+   const classId =  (args.object as any).classId
     if (!value) return false;
 
     const classInfo = await Class.findOne({ where: { code: value } });
-    if (classInfo) return false;
+    if (classInfo  &&classId !== classInfo.classId) {
+         return false
+    } 
     return true;
   }
 

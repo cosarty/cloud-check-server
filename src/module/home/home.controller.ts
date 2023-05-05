@@ -223,7 +223,7 @@ export class HomeController {
         );
         return {
           name: p.courseName,
-          comment: p.user.userName,
+          comment: p?.user?.userName ?? '未知',
           ratio: stuNum / (singNum ?? 0),
         };
       })

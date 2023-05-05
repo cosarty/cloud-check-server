@@ -24,7 +24,7 @@ export class CreateClassDto implements ClassType {
 
   @IsDefined({ message: '请输入班级编号' })
   @IsInt({ message: '班级编号为整数' })
-  // @Validate(VrifyCodeRule)
+  @Validate(VrifyCodeRule)
   code: number;
   @IsOptional()
   @IsString({ message: '备注为字符串类型' })

@@ -28,6 +28,8 @@ export class EmailTypeRule implements ValidatorConstraintInterface {
 
         // 查询数据
         return !code;
+      case 'login':
+        return true
       default:
         return false;
     }

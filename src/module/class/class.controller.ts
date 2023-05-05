@@ -28,7 +28,6 @@ import { Op, Sequelize, where } from 'sequelize';
 import { ClassscheduleService } from '../classSchedule/classschedule.service';
 import * as loadsh from 'lodash';
 
-
 @Controller('class')
 @Auth()
 export class ClassController {
@@ -250,5 +249,60 @@ export class ClassController {
       },
       include: [{ association: 'teacher' }],
     });
+  }
+
+  @Get('getTeacherCourse')
+  async getTeacherCourse(@Query() { classId, userId }: any) {
+    console.log('classId,userId: ', classId, userId);
+    const sc = await this.user.count({
+      where: {
+        classId,
+      },
+    });
+
+    const info = await this.classSchedule.findAll({
+      where: {
+        classId,
+        isEnd: false,
+      },
+      include: [
+        {
+          association: 'course',
+          where: {
+            userId,
+          },
+        },
+        {
+          association: 'singTask',
+          include: [
+            {
+              association: 'students',
+              required: false,
+            },
+          ],
+        },
+      ],
+    });
+
+    const cpi = info.map((i) => {
+      return i.singTask.reduce(
+        (pre: any, nxt) => {
+          pre[2] +=
+            sc -
+            nxt.students.filter((s) => s.type !== undefined && s.type !== null)
+              .length;
+          pre[0] += sc - nxt.students.filter((s) => s.type === 0).length;
+          pre[1] += sc - nxt.students.filter((s) => s.type === 1).length;
+
+          return pre;
+        },
+        [0, 0, 0],
+      );
+    });
+
+    return {
+      value: loadsh.zip(...cpi),
+      name: info.map((i) => i.course.courseName),
+    };
   }
 }

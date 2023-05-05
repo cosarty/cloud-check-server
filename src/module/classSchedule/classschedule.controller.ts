@@ -1,7 +1,7 @@
 import { User } from '@/common/decorator/user.decorator';
 import { Auth } from '@/common/role/auth.decorator';
 import { ModelsEnum, PickModelType } from '@/models';
-import { Body, Controller, Get, Inject, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, Post, Query } from '@nestjs/common';
 import { ClassscheduleService } from './classschedule.service';
 import { Op } from 'sequelize';
 
@@ -34,14 +34,14 @@ export class ClassScheduleController {
    */
   @Get('getTeacherClass')
   @Auth()
-  async getTeacherClass(@User() user) {
+  async getTeacherClass(@Query() {userId}) {
     const data = this.classModle.findAll({
       include: [
         {
           required: true,
           association: 'course',
           where: {
-            userId: user.userId,
+            userId,
           },
           include: [{ association: 'user' }],
           through: {
