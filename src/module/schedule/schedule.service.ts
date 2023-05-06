@@ -158,7 +158,7 @@ export class ScheduleService {
           },
         ],
 
-        where: { scheduleName: name, isEnd: { [Op.not]: true } },
+        where: { scheduleName: name, isEnd: { [Op.not]: false } },
       });
 
       // 判断当前轮询时间
