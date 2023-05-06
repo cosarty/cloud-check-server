@@ -385,11 +385,8 @@ export class HomeController {
             nxt.students.filter((s) => s.type !== undefined && s.type !== null)
               .length;
           pre[0] +=
-            i.class.studnets.length -
             nxt.students.filter((s) => s.type === 0).length;
-          pre[1] +=
-            i.class.studnets.length -
-            nxt.students.filter((s) => s.type === 1).length;
+          pre[1] += nxt.students.filter((s) => s.type === 1).length;
 
           return pre;
         },
