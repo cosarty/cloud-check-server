@@ -99,7 +99,7 @@ export class ClassScheduleController {
   @Get('checkCourse/:id')
   async checkCourse(@Param() pram: any) {
     return await this.classSchedule.findOne({
-      where: { classScheduleId: pram.id, isEnd: false },
+      where: { classScheduleId: pram.id },
       include: [
         { association: 'classHours', include: ['time', 'timing'] },
         { association: 'course', required: true },

@@ -256,44 +256,100 @@ export class SingTaskController {
 
   // 获取某一天的签到
   @Post('getCurrentDay')
-  async getCurrentDay(@Body() { date }) {
-    return await this.singTask.findAll({
-      order: [['isRun', 'DESC'],['createdAt', 'DESC'],],
+  @Auth()
+  async getCurrentDay(@Body() { date }, @User() user: any) {
+    if (user.classId && user.auth === 'student') {
+      return await this.singTask.findAll({
+        order: [
+          ['isRun', 'DESC'],
+          ['createdAt', 'DESC'],
+        ],
 
-      where: {
-        // isEnd: false,
-        taskTime: {
-          [Op.and]: {
-            [Op.gte]: dayjs(date).startOf('day').toDate(),
-            [Op.lte]: dayjs(date).endOf('day').toDate(),
-          },
-        },
-      },
-      include: [
-        { association: 'area' },
-        { association: 'students' },
-        {
-          required: true,
-          association: 'classSchedule',
-          where: {
-            isEnd: false,
-            starDate: {
-              [Op.lte]: new Date(),
-            },
-            endDate: {
-              [Op.gte]: new Date(),
+        where: {
+          // isEnd: false,
+          taskTime: {
+            [Op.and]: {
+              [Op.gte]: dayjs(date).startOf('day').toDate(),
+              [Op.lte]: dayjs(date).endOf('day').toDate(),
             },
           },
-          include: [
-            {
-              association: 'course',
-            },
-            {
-              association: 'class',
-            },
-          ],
         },
-      ],
-    });
+        include: [
+          { association: 'area' },
+          { association: 'students' },
+          {
+            required: true,
+            association: 'classSchedule',
+            where: {
+              classId: user.classId,
+              isEnd: false,
+              starDate: {
+                [Op.lte]: new Date(),
+              },
+              endDate: {
+                [Op.gte]: new Date(),
+              },
+            },
+            include: [
+              {
+                association: 'course',
+              },
+              {
+                association: 'class',
+              },
+            ],
+          },
+        ],
+      });
+    }
+
+    if (user.auth === 'teacher') {
+      return await this.singTask.findAll({
+        order: [
+          ['isRun', 'DESC'],
+          ['createdAt', 'DESC'],
+        ],
+
+        where: {
+          // isEnd: false,
+          taskTime: {
+            [Op.and]: {
+              [Op.gte]: dayjs(date).startOf('day').toDate(),
+              [Op.lte]: dayjs(date).endOf('day').toDate(),
+            },
+          },
+        },
+        include: [
+          { association: 'area' },
+          { association: 'students' },
+          {
+            required: true,
+            association: 'classSchedule',
+            where: {
+              isEnd: false,
+              starDate: {
+                [Op.lte]: new Date(),
+              },
+              endDate: {
+                [Op.gte]: new Date(),
+              },
+            },
+            include: [
+              {
+                association: 'course',
+                where: {
+                  userId: user.userId,
+                },
+              },
+              {
+                association: 'class',
+              },
+            ],
+          },
+        ],
+      });
+    }
+
+    return [];
   }
 }

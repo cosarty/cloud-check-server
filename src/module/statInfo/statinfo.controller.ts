@@ -210,6 +210,9 @@ export class StatInfoController {
   @Get('getSingStat')
   async getSingStat(@Query() payload: any) {
     const data = await this.classSchdule.findOne({
+      where: {
+        classScheduleId:payload.classScheduleId
+      },
       include: {
         required: true,
         association: 'class',
